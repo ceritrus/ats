@@ -1,0 +1,152 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.App {
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+
+.read-the-docs {
+  color: #888;
+}
+
+.navbar {
+  background-color: #bac5ff;
+  position: sticky;
+  top: 0;
+  list-style-type: none;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  
+  gap: 3em;
+
+  padding: 1em 1.5em;
+}
+
+.nav-profile {
+  border-radius: 0.5em;
+  background-color: #000000;
+  color: #ffffff;
+  text-decoration: none;
+  padding: .2em 1em;
+  font-size: 1.5em;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+
+  flex-direction: row;
+  gap: .5em;
+  transition-duration: 0.2s;
+}
+
+.nav-profile:hover {
+  color: #000000;
+  background-color: #ffffff;
+  transition-duration: 0.2s;
+}
+
+.nav-link:first-of-type {
+  margin-right: auto;
+  font-size: 2em;
+  color: #000000;
+  text-decoration: none;
+  display: flex;
+  gap: .5em;
+  align-items: center;
+}
+
+.nav-section {
+  color: black;
+  text-decoration: none;
+  font-size: 1.5em;
+  
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.Searchbar {
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  width: 40em;
+
+  margin-left: auto;
+
+  border: 1px solid #2b2d42;
+  border-radius: 2rem;
+  float: right;
+
+  button {
+    background-color: #585b85;
+    width: 4rem;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 0 2rem 2rem 0;
+    cursor: pointer;
+    float: right;
+    transition-duration: 0.2s;
+  }
+
+  button:hover {
+    background-color: #8a8fc7;
+    transition-duration: 0.2s;
+  }
+
+  input {
+    width: 100%;
+    border: none;
+    border-radius: 2rem 0 0 2rem;
+    padding: 0.5rem;
+    padding-left: 1rem;
+    background-color: #edf2f4;
+  }
+}
+
+.logo {
+  height: 2em;
+  padding: 0em;
+}
