@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
-from typing import Type, TypeVar, Generic, Callable, List
+from typing import Type, TypeVar, Generic, Callable, List, Optional
 from back.db.database import get_session
 from sqlmodel import SQLModel
 
@@ -16,12 +16,14 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         read_schema: Type[ReadSchemaType],
         prefix: str,
         router: APIRouter = APIRouter(),
+        create_callback: Optional[Callable[..., object]] = None,
     ):
         self.service = service
         self.create_schema = create_schema
         self.read_schema = read_schema
         self.router = router
         self.prefix = prefix
+        self.create_callback = create_callback 
         self.generate_routes()
 
     def generate_routes(self):
@@ -29,15 +31,17 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         def create_item(
             item: self.create_schema, session: Session = Depends(get_session)
         ):
+            if self.create_callback: 
+                return self.create_callback(item, session)
             created_item = self.service.create(item, session)
-            return self.read_schema.parse_obj(created_item)
+            return self.read_schema.from_orm(created_item)
 
         @self.router.get(f"{self.prefix}/{{item_id}}", response_model=self.read_schema)
         def read_item(item_id: int, session: Session = Depends(get_session)):
             item = self.service.get(item_id, session)
             if item is None:
                 raise HTTPException(status_code=404, detail="Item not found")
-            return self.read_schema.parse_obj(item)
+            return self.read_schema.from_orm(item)
 
         @self.router.put(f"{self.prefix}/{{item_id}}", response_model=self.read_schema)
         def update_item(
@@ -48,7 +52,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             updated_item = self.service.update(item_id, item, session)
             if updated_item is None:
                 raise HTTPException(status_code=404, detail="Item not found")
-            return self.read_schema.parse_obj(updated_item)
+            return self.read_schema.from_orm(updated_item)
 
         @self.router.delete(f"{self.prefix}/{{item_id}}", response_model=dict)
         def delete_item(item_id: int, session: Session = Depends(get_session)):
@@ -60,4 +64,4 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         @self.router.get(f"{self.prefix}/", response_model=List[self.read_schema])
         def get_all_items(session: Session = Depends(get_session)):
             items = self.service.get_all(session)
-            return [self.read_schema.parse_obj(item) for item in items]
+            return [self.read_schema.from_orm(item) for item in items]
