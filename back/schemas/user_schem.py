@@ -9,4 +9,3 @@ class UserCreate(UserBase):
 
 class UserRead(UserBase):
     id: int
-    created_at: str
