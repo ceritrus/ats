@@ -38,7 +38,14 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
                 return self.create_callback(item, session)
             created_item = self.service.create(item, session)
             return self.read_schema.from_orm(created_item)
-
+        
+        @self.router.get(f"{self.prefix}/search", response_model=List[self.read_schema], tags=[self.tags])
+        def search_items(query: str, field: Optional[str], session: Session = Depends(get_session)):
+            if not query:
+                raise HTTPException(status_code=400, detail="Search query not in")
+            results = self.service.search(query,session, field)
+            return [self.read_schema.from_orm(item) for item in results]
+        
         @self.router.get(f"{self.prefix}/{{item_id}}", response_model=self.read_schema, tags=[self.tags])
         def read_item(item_id: int, session: Session = Depends(get_session)):
             item = self.service.get(item_id, session)
@@ -68,3 +75,4 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         def get_all_items(session: Session = Depends(get_session)):
             items = self.service.get_all(session)
             return [self.read_schema.from_orm(item) for item in items]
+        

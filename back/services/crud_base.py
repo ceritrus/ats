@@ -1,5 +1,6 @@
 from typing import Type, TypeVar, Generic, List, Optional
 from sqlmodel import SQLModel, Session, select
+from back.utils.lefenshtein_utils import levenshtein
 
 ModelType = TypeVar("ModelType", bound=SQLModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=SQLModel)
@@ -46,3 +47,35 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             session.commit()
             return True
         return False
+    def search(self, search_term: str, session: Session, field: Optional[str] = None) -> List[ReadSchemaType]:
+        statement = select(self.model)
+        results = session.exec(statement).all()
+
+        matching_results = []
+
+        for obj in results:
+            if field:
+                if hasattr(obj, field):
+                    value = getattr(obj, field)
+                    if isinstance(value, str):
+                        distance = levenshtein(value, search_term)
+                        if distance <= 2:
+                            matching_results.append(obj)
+            else:
+                for obj_field in obj.__dict__:
+                    if not obj_field.startswith("_"):  
+                        value = getattr(obj, obj_field)
+                        if isinstance(value, str):
+                            distance = levenshtein(value, search_term)
+                            if distance <= 2:
+                                matching_results.append(obj)
+                                break
+                            
+        return [self.read_schema.from_orm(obj) for obj in matching_results]
+
+    def get_levenshtein_distance(self, obj_id: int, session: Session, reference_word: str) -> Optional[int]:
+        statement = select(self.model).where(self.model.id == obj_id)
+        db_obj = session.exec(statement).first()
+        if db_obj:
+            return levenshtein(db_obj.name, reference_word)
+        return None
