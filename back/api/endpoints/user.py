@@ -11,7 +11,7 @@ user_crud_router = CRUDRouter(
     service=crud_user,
     create_schema=UserCreate,
     read_schema=UserRead,
-    prefix="/users",
+    prefix="/user",
     tags="User",
     create_callback=custom_create_user,
 )
