@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { Fetch } from "../utils/Api";
+import { DataGrid } from "@mui/x-data-grid";
+import Paper from "@mui/material/Paper";
+
+const columns = [
+  { field: "company_description", headerName: "ENTREPRISE", minWidth: 170 },
+  { field: "title", headerName: "TITRE", minWidth: 170 },
+  { field: "description", headerName: "DESCRIPTION", minWidth: 300 },
+  { field: "posted_date", headerName: "PUBLIÉ LE", minWidth: 170 },
+  { field: "end_of_application", headerName: "DATE LIMITE", minWidth: 170 },
+  { field: "job_location", headerName: "LIEU", minWidth: 170 },
+];
+const paginationModel = { page: 0, pageSize: 10 };
 
 export default function Offers() {
   const [data, setData] = useState([]);
@@ -25,28 +37,15 @@ export default function Offers() {
       <Navbar />
       <div className="offers">
         <h1>Offres</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>Entreprise</th>
-              <th>Titre</th>
-              <th>Description</th>
-              <th>Date de publication</th>
-              <th>Date limite</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((offer) => (
-              <tr key={offer.id}>
-                <td>{offer.company_description}</td>
-                <td>{offer.title}</td>
-                <td>{offer.description}</td>
-                <td>{String(offer.posted_date).replaceAll("-", "/")}</td>
-                <td>{String(offer.end_of_application).replaceAll("-", "/")}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Paper sx={{ height: "90%", width: "100%" }}>
+          <DataGrid
+            rows={data}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[5, 10, 50]}
+            sx={{ border: 0 }}
+          />
+        </Paper>
       </div>
     </div>
   );

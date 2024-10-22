@@ -228,6 +228,8 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 2em;
+  border-radius: .25em;
+  box-shadow: 0 0 1em 0.2em #00000027;
   padding: 2em;
 }
 
@@ -235,26 +237,6 @@
   margin: 0em;
   font-size: 3em;
   text-align: left;
-  text-shadow: 1px 1px 3px white;
-}
-
-table {
-  border-collapse:collapse;
-  width: 100%;
-}
-
-th, td {
-  border: 1px solid #2b2d42;
-  padding: 8px;
-  text-align: center;
-}
-
-th {
-  background-color: #686de0;
+  text-shadow: 1px 1px 3px black;
   color: white;
-  text-transform: uppercase;
-}
-
-td {
-  background-color: #edf2f4;
 }
