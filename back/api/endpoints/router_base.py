@@ -11,6 +11,7 @@ ReadSchemaType = TypeVar("ReadSchemaType", bound=SQLModel)
 class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
     def __init__(
         self,
+        tags: str,
         service: Callable[..., object],
         create_schema: Type[CreateSchemaType],
         read_schema: Type[ReadSchemaType],
@@ -19,15 +20,17 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         create_callback: Optional[Callable[..., object]] = None,
     ):
         self.service = service
+        self.tags = tags
         self.create_schema = create_schema
         self.read_schema = read_schema
         self.router = router
         self.prefix = prefix
         self.create_callback = create_callback 
         self.generate_routes()
+        
 
     def generate_routes(self):
-        @self.router.post(f"{self.prefix}/create", response_model=self.read_schema)
+        @self.router.post(f"{self.prefix}/create", response_model=self.read_schema, tags=[self.tags])
         def create_item(
             item: self.create_schema, session: Session = Depends(get_session)
         ):
@@ -35,15 +38,22 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
                 return self.create_callback(item, session)
             created_item = self.service.create(item, session)
             return self.read_schema.from_orm(created_item)
-
-        @self.router.get(f"{self.prefix}/{{item_id}}", response_model=self.read_schema)
+        
+        @self.router.get(f"{self.prefix}/search", response_model=List[self.read_schema], tags=[self.tags])
+        def search_items(query: str, field: Optional[str], session: Session = Depends(get_session)):
+            if not query:
+                raise HTTPException(status_code=400, detail="Search query not in")
+            results = self.service.search(query,session, field)
+            return [self.read_schema.from_orm(item) for item in results]
+        
+        @self.router.get(f"{self.prefix}/{{item_id}}", response_model=self.read_schema, tags=[self.tags])
         def read_item(item_id: int, session: Session = Depends(get_session)):
             item = self.service.get(item_id, session)
             if item is None:
                 raise HTTPException(status_code=404, detail="Item not found")
             return self.read_schema.from_orm(item)
 
-        @self.router.put(f"{self.prefix}/{{item_id}}", response_model=self.read_schema)
+        @self.router.put(f"{self.prefix}/{{item_id}}", response_model=self.read_schema, tags=[self.tags])
         def update_item(
             item_id: int,
             item: self.create_schema,
@@ -54,14 +64,15 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
                 raise HTTPException(status_code=404, detail="Item not found")
             return self.read_schema.from_orm(updated_item)
 
-        @self.router.delete(f"{self.prefix}/{{item_id}}", response_model=dict)
+        @self.router.delete(f"{self.prefix}/{{item_id}}", response_model=dict, tags=[self.tags])
         def delete_item(item_id: int, session: Session = Depends(get_session)):
             success = self.service.delete(item_id, session)
             if not success:
                 raise HTTPException(status_code=404, detail="Item not found")
             return {"detail": f"{self.prefix.capitalize()} deleted successfully"}
 
-        @self.router.get(f"{self.prefix}/", response_model=List[self.read_schema])
+        @self.router.get(f"{self.prefix}/", response_model=List[self.read_schema], tags=[self.tags])
         def get_all_items(session: Session = Depends(get_session)):
             items = self.service.get_all(session)
             return [self.read_schema.from_orm(item) for item in items]
+        
