@@ -5,5 +5,7 @@ class User(SQLModel, table=True):
     username: str = Field(max_length=50, unique=True)
     email: str = Field(max_length=100, unique=True)
     password: str
+
     recruiter: "Recruiter" = Relationship(back_populates="user", cascade_delete=True)
-    recruiter: "Candidate" = Relationship(back_populates="user", cascade_delete=True)
+    
+    candidate: "Candidate" = Relationship(back_populates="user", cascade_delete=True)

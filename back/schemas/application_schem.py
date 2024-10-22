@@ -12,6 +12,7 @@ class ApplicationCreate(SQLModel):
     ats_final_note: Optional[Decimal] = None
     feedback: Optional[str] = None
     id_candidate: int  
+    id_job_offer: int
 
 class ApplicationUpdate(SQLModel):
     status: Optional[Status] = None
@@ -27,5 +28,6 @@ class ApplicationRead(SQLModel):
     ats_final_note: Optional[Decimal] = None
     feedback: Optional[str] = None
     id_candidate: int  
+    id_job_offer: int
     class Config:
         orm_mode = True  

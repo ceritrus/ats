@@ -6,7 +6,9 @@ class Candidate(SQLModel, table=True):
     first_name: str = Field(max_length=50)
     last_name: str = Field(max_length=100)
     phone_number: str = Field(max_length=10, unique=True)
-    cv_link : str = Field(max_length=100, unique=True)
+    cv_link: str = Field(max_length=100, unique=True)
     id_user: int = Field(foreign_key='user.id', unique=True)
+    
     user: User = Relationship(back_populates="candidate")
+
     applications: list["Application"] = Relationship(back_populates="candidate")

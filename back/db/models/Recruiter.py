@@ -7,4 +7,5 @@ class Recruiter(SQLModel, table=True):
     last_name: str = Field(max_length=100)
     phone_number: str = Field(max_length=10, unique=True)
     id_user: int = Field(foreign_key='user.id', unique=True)
+    
     user: User = Relationship(back_populates="recruiter")
