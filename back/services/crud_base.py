@@ -1,6 +1,9 @@
 from typing import Type, TypeVar, Generic, List, Optional
 from sqlmodel import SQLModel, Session, select
 from back.utils.lefenshtein_utils import levenshtein
+from math import ceil
+from typing import Dict, Any
+from sqlalchemy import func
 
 ModelType = TypeVar("ModelType", bound=SQLModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=SQLModel)
@@ -27,7 +30,34 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         statement = select(self.model)
         objs = session.exec(statement).all()
         return [self.read_schema.from_orm(obj) for obj in objs]
+    
+    def get_paginated(self, session: Session, limit: int = 10, offset: int = 0) -> Dict[str, Any]:
+        total_items_statement = select(func.count()).select_from(self.model)
+        total_items = session.exec(total_items_statement).first()
+        total_pages = ceil(total_items / limit)
 
+        statement = select(self.model).offset(offset).limit(limit)
+        objs = session.exec(statement).all()
+
+        if not objs:
+            return {
+                "items": [],
+                "total_items": total_items,
+                "total_pages": total_pages,
+                "current_page": (offset // limit) + 1,
+                "page_size": limit
+            }
+
+        items = [self.read_schema.from_orm(obj) for obj in objs]
+
+        return {
+            "items": items,
+            "total_items": total_items,
+            "total_pages": total_pages,
+            "current_page": (offset // limit) + 1,
+            "page_size": limit
+        }
+    
     def update(self, obj_id: int, obj_in: CreateSchemaType, session: Session) -> Optional[ReadSchemaType]:
         statement = select(self.model).where(self.model.id == obj_id)
         db_obj = session.exec(statement).first()
