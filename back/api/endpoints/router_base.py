@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
-from typing import Type, TypeVar, Generic, Callable, List, Optional
+from typing import Type, TypeVar, Generic, Callable, List, Optional, Dict, Any
 from back.db.database import get_session
 from sqlmodel import SQLModel
 
@@ -28,8 +28,21 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         self.create_callback = create_callback 
         self.generate_routes()
         
-
     def generate_routes(self):
+        @self.router.get(f"{self.prefix}/paginated", response_model=Dict[str, Any], tags=[self.tags])
+        def get_paginated_items(
+            limit: int = 10, 
+            offset: int = 0, 
+            session: Session = Depends(get_session)
+        ):
+            paginated_result = self.service.get_paginated(session, limit=limit, offset=offset)
+            return {
+                "items": paginated_result["items"],
+                "total_items": paginated_result["total_items"],
+                "total_pages": paginated_result["total_pages"],
+                "current_page": paginated_result["current_page"],
+                "page_size": paginated_result["page_size"],
+            }
         @self.router.post(f"{self.prefix}/create", response_model=self.read_schema, tags=[self.tags])
         def create_item(
             item: self.create_schema, session: Session = Depends(get_session)
@@ -42,8 +55,8 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         @self.router.get(f"{self.prefix}/search", response_model=List[self.read_schema], tags=[self.tags])
         def search_items(query: str, field: Optional[str], session: Session = Depends(get_session)):
             if not query:
-                raise HTTPException(status_code=400, detail="Search query not in")
-            results = self.service.search(query,session, field)
+                raise HTTPException(status_code=400, detail="Search query not provided")
+            results = self.service.search(query, session, field)
             return [self.read_schema.from_orm(item) for item in results]
         
         @self.router.get(f"{self.prefix}/{{item_id}}", response_model=self.read_schema, tags=[self.tags])
@@ -75,4 +88,4 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         def get_all_items(session: Session = Depends(get_session)):
             items = self.service.get_all(session)
             return [self.read_schema.from_orm(item) for item in items]
-        
+
