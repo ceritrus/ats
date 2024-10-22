@@ -10,6 +10,7 @@ class ApplicationCreate(SQLModel):
     status: Status = Status.waiting
     ats_prenotation: Optional[Decimal] = None
     ats_final_note: Optional[Decimal] = None
+    cv_link:str
     feedback: Optional[str] = None
     id_candidate: int  
     id_job_offer: int
