@@ -1,11 +1,12 @@
 import os
 from back.core.config import settings
-from fastapi import APIRouter,File, UploadFile, HTTPException
+from fastapi import APIRouter,File, UploadFile, HTTPException, Depends
 from fastapi.responses import JSONResponse, FileResponse
 from pathlib import Path
 import random
 import string
-
+from back.api.auth import role_required
+from typing import List
 file_upload_router = APIRouter()
 
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
@@ -18,7 +19,7 @@ def generate_random_filename(extension="", length=10):
             random_name += f".{extension}"
         yield random_name
 
-@file_upload_router.post("/upload/", tags=["FileUpload"])
+@file_upload_router.post("/upload/", tags=["FileUpload"], dependencies=[Depends(role_required(List("Recruiter", "Candidate")))])
 async def upload_file(file: UploadFile = File(...)):
     if file.content_type != "application/pdf" or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
@@ -38,11 +39,11 @@ async def upload_file(file: UploadFile = File(...)):
         with open(file_location, "wb") as f:
             content = await file.read()
             f.write(content)
-        return {"cv_name": random_filename}
+        return JSONResponse({"cv_name": random_filename}, 200)
     except Exception as e:
         return {"error": str(e)}
     
-@file_upload_router.get("/download/{file_name}", tags=["FileUpload"])
+@file_upload_router.get("/download/{file_name}", tags=["FileUpload"], dependencies=[Depends(role_required(List("Recruiter", "Candidate")))])
 async def download_file(file_name: str):
     candidate_dir = Path(settings.UPLOAD_DIR)
     file_path = candidate_dir / file_name
