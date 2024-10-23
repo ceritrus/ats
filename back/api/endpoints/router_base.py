@@ -98,7 +98,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             if not search_query.query:
                 raise HTTPException(status_code=400, detail="Search query not provided")
             
-            search_results = self.service.search(search_query.query, session, search_query.fields, search_query.exact)
+            search_results = self.service.search_improved(search_query.query, session, search_query.fields, search_query.exact)
 
             paginated_results = search_results[search_query.offset:search_query.offset + search_query.limit]
 
