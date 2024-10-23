@@ -1,11 +1,11 @@
-from sqlmodel import SQLModel
+from sqlmodel import Field, SQLModel
 
 class SoftSkillCreate(SQLModel):
-    label: str
+    label: str = Field(..., max_length=20)
 
 class SoftSkillRead(SQLModel):
     id: int
-    label: str
-
+    label: str = Field(..., max_length=20)  
+    
     class Config:
         orm_mode = True

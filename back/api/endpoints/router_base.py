@@ -1,4 +1,6 @@
+from math import ceil
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlmodel import Session
 from typing import Type, TypeVar, Generic, Callable, List, Optional, Dict, Any
 from back.db.database import get_session
@@ -8,6 +10,13 @@ from back.api.auth import role_required
 ModelType = TypeVar("ModelType", bound=SQLModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=SQLModel)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=SQLModel)
+
+class SearchQuery(BaseModel):
+    query: Dict[str, Any]
+    fields: List[str]     
+    limit: int = 10        
+    offset: int = 0        
+    exact: bool = False     
 
 class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
     def __init__(
@@ -77,7 +86,33 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
                 raise HTTPException(status_code=400, detail="Search query not provided")
             results = self.service.search(query, session, field)
             return [self.read_schema.from_orm(item) for item in results]
-        
+        @self.router.post(
+            f"{self.prefix}/search_paginated", 
+            response_model=Dict[str, Any], 
+            tags=[self.tags],
+            dependencies=[Depends(role_required(self.roles.get("search_paginated")))]
+        )
+        def search_paginated_items(
+            search_query: SearchQuery,
+            session: Session = Depends(get_session)
+        ):
+            if not search_query.query:
+                raise HTTPException(status_code=400, detail="Search query not provided")
+            
+            search_results = self.service.search_improved(search_query.query, session, search_query.fields, search_query.exact)
+
+            paginated_results = search_results[search_query.offset:search_query.offset + search_query.limit]
+
+            total_items = len(search_results) 
+            total_pages = ceil(total_items / search_query.limit)
+
+            return {
+                "items": paginated_results,
+                "total_items": total_items,
+                "total_pages": total_pages,
+                "current_page": (search_query.offset // search_query.limit) + 1,
+                "page_size": search_query.limit
+            }
         @self.router.get(
             f"{self.prefix}/{{item_id}}", 
             response_model=self.read_schema, 
