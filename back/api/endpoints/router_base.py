@@ -19,7 +19,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         prefix: str,
         router: APIRouter = APIRouter(),
         create_callback: Optional[Callable[..., object]] = None,
-        roles: Dict[str, List[str]] = None  # Dictionary to specify roles per route
+        roles: Dict[str, List[str]] = None  
     ):
         self.service = service
         self.tags = tags
@@ -36,7 +36,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             f"{self.prefix}/paginated", 
             response_model=Dict[str, Any], 
             tags=[self.tags],
-            dependencies=[Depends(role_required(self.roles.get("get_paginated")))]  # Dépendances selon les rôles
+            dependencies=[Depends(role_required(self.roles.get("get_paginated")))]  
         )
         def get_paginated_items(
             limit: int = 10, 
@@ -56,7 +56,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             f"{self.prefix}/create", 
             response_model=self.read_schema, 
             tags=[self.tags],
-            dependencies=[Depends(role_required(self.roles.get("create")))]  # Restriction selon les rôles
+            dependencies=[Depends(role_required(self.roles.get("create")))]  
         )
         def create_item(
             item: self.create_schema, session: Session = Depends(get_session)
