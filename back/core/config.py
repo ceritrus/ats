@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     #Roles def for endpoints. Value is [], ["Recruiter"], ["Candidate"], ["Recruiter", "Candidate"]
     
     roles_application:Dict[str, List[str]] = {       
-        "create": ["Recruiter"],
-        "read": ["Recruiter"],               
+        "create": [],
+        "read": [],               
         "update": [],   
         "delete": [],   
         "get_all": [],            
@@ -71,7 +71,7 @@ class Settings(BaseSettings):
         "read": [],               
         "update": [],   
         "delete": [],   
-        "get_all": ["Candidate", "Recruiter"],            
+        "get_all": [],            
         "get_paginated": [],      
         "search": [],             
     }      
