@@ -3,40 +3,48 @@ from back.core.config import settings
 from fastapi import APIRouter,File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 from pathlib import Path
+import random
+import string
 
 file_upload_router = APIRouter()
 
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 
-@file_upload_router.post("/upload/{candidate_id}/{application_id}", tags=["FileUpload"])
-async def upload_file(candidate_id: int, application_id:int,file:UploadFile=File(...)):
-    candidate_dir = f"{settings.UPLOAD_DIR}/{str(candidate_id)}/applications/{str(application_id)}"
+def generate_random_filename(extension="", length=10):
+    characters = string.ascii_letters + string.digits  # a-zA-Z0-9
+    while True:
+        random_name = ''.join(random.choices(characters, k=length))
+        if extension:
+            random_name += f".{extension}"
+        yield random_name
+
+@file_upload_router.post("/upload/", tags=["FileUpload"])
+async def upload_file(file: UploadFile = File(...)):
+    if file.content_type != "application/pdf" or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
+    
+    candidate_dir = f"{settings.UPLOAD_DIR}/"
     os.makedirs(candidate_dir, exist_ok=True)
 
-    file_location = candidate_dir+'/'+file.filename
+    file_extension = os.path.splitext(file.filename)
 
+    random_name_generator = generate_random_filename(file_extension.lstrip('.'))
+    while True:
+        random_filename = next(random_name_generator)
+        file_location = os.path.join(candidate_dir, random_filename)
+        if not os.path.exists(file_location):
+            break
     try:
         with open(file_location, "wb") as f:
             content = await file.read()
             f.write(content)
-        
+        return {"cv_name": random_filename}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur lors de l'enregistrement du fichier :{str(e)}")
-    return JSONResponse(content={"filename": file.filename, "path": str(file_location)})
-
-@file_upload_router.get("/files/{candidate_id}/{application_id}", tags=["FileUpload"])
-async def list_files(candidate_id: int, application_id: int):
-    candidate_dir = Path(f"{settings.UPLOAD_DIR}/{str(candidate_id)}/applications/{str(application_id)}")
+        return {"error": str(e)}
     
-    if not candidate_dir.exists():
-        raise HTTPException(status_code=404, detail="Répertoire de candidature non trouvé.")
-
-    files = [f.name for f in candidate_dir.iterdir() if f.is_file()]
-    return JSONResponse(content={"files": files})
-
-@file_upload_router.get("/download/{candidate_id}/{application_id}/{file_name}", tags=["FileUpload"])
-async def download_file(candidate_id: int, application_id: int, file_name: str):
-    candidate_dir = Path(settings.UPLOAD_DIR) / str(candidate_id) / "applications" / str(application_id)
+@file_upload_router.get("/download/{file_name}", tags=["FileUpload"])
+async def download_file(file_name: str):
+    candidate_dir = Path(settings.UPLOAD_DIR)
     file_path = candidate_dir / file_name
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="Fichier non trouvé.")
