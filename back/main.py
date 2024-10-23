@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"], 
 )
 
-app.include_router(api_router, prefix="/api/v1")
+app.include_router(api_router, prefix="/api")
 create_db_and_tables()
 @app.get("/", tags=["Root"])
 async def read_root():
