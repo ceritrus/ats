@@ -27,6 +27,7 @@ class JobOfferRead(SQLModel):
     posted_date: datetime.date
     end_of_application: datetime.date
     id_recruiter: int
+    
 
     class Config:
         orm_mode = True

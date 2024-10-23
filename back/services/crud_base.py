@@ -109,3 +109,32 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         if db_obj:
             return levenshtein(db_obj.name, reference_word)
         return None
+    def search_improved(self, query: Dict[str, Any], session: Session, fields: List[str], exact: bool = False) -> List[ReadSchemaType]:
+        statement = select(self.model)
+        results = session.exec(statement).all()
+
+        matching_results = []
+
+        for obj in results:
+            is_match = True
+            
+            for field, value in query.items():
+                if field in fields:
+                    if hasattr(obj, field):
+                        obj_value = getattr(obj, field)
+                        
+                        if isinstance(obj_value, str):
+                            if exact:
+                                if obj_value != value:
+                                    is_match = False
+                                    break
+                            else:
+                                distance = levenshtein(obj_value, str(value))
+                                if distance > 2:
+                                    is_match = False
+                                    break
+
+            if is_match:
+                matching_results.append(obj)
+
+        return [self.read_schema.from_orm(obj) for obj in matching_results]
