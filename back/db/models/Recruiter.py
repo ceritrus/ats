@@ -1,3 +1,4 @@
+from typing import List
 from sqlmodel import SQLModel, Field, Relationship
 from back.db.models.User import User
 
@@ -9,3 +10,4 @@ class Recruiter(SQLModel, table=True):
     id_user: int = Field(foreign_key='user.id', unique=True)
     
     user: User = Relationship(back_populates="recruiter")
+    job_offers: List["JobOffer"] = Relationship(back_populates="recruiter")

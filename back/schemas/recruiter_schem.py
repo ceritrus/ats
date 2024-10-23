@@ -5,6 +5,7 @@ class RecruiterBase(SQLModel):
     last_name: str = Field(max_length=100)
     phone_number: str = Field(max_length=10)
     id_user: int
+
 class RecruiterCreate(RecruiterBase):
     pass
 
