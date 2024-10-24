@@ -27,7 +27,7 @@ class OAuth2PasswordBearerOptional(OAuth2PasswordBearer):
         if authorization:
             return await super().__call__(request)
         return None
-oauth_bearer_optional  = OAuth2PasswordBearerOptional(tokenUrl='/api/v1/auth/token')
+oauth_bearer_optional  = OAuth2PasswordBearerOptional(tokenUrl='/api/auth/token')
 
 class Token(BaseModel):
     access_token: str
