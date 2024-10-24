@@ -27,9 +27,7 @@ async def upload_file(file: UploadFile = File(...)):
     candidate_dir = f"{settings.UPLOAD_DIR}/"
     os.makedirs(candidate_dir, exist_ok=True)
 
-    file_extension = os.path.splitext(file.filename)
-
-    random_name_generator = generate_random_filename(file_extension.lstrip('.'))
+    random_name_generator = generate_random_filename("pdf")
     while True:
         random_filename = next(random_name_generator)
         file_location = os.path.join(candidate_dir, random_filename)
