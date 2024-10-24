@@ -22,7 +22,7 @@ export default function Offers() {
   useEffect(() => {
     const request = async () => {
       try {
-        const response = await Fetch("/api/v1/job-offer");
+        const response = await Fetch("/api/job-offer");
         setData(response);
       } catch (error) {
         console.error("Error fetching data:", error);
