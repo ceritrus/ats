@@ -240,3 +240,57 @@
   text-shadow: 1px 1px 3px black;
   color: white;
 }
+
+.offer {
+  background: linear-gradient(45deg, #22a6b3, #7ed6df);
+  padding: 3em;
+  margin: 4em;
+
+  text-align: left;
+  border-radius: .25em;
+  box-shadow: 0 0 1em 0.2em #00000027;
+  padding: 2em;
+}
+
+.offer h1 {
+  margin: 0em;
+  font-size: 3em;
+  text-align: left;
+  text-shadow: 1px 1px 3px black;
+  color: white;
+}
+
+.offer div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.offer {
+  font-size: 1.2em;
+}
+
+.description {
+  font-size: 1.5em;
+}
+
+.offer div button {
+  height: 3em;
+  color: white;
+  background-color: black;
+  transition-duration: .5s;
+}
+
+.offer div button:hover {
+  color: black;
+  background-color: white;
+  border: none;
+  transition-duration: .5s;
+}
+
+.offer span {
+  background-color: #7ed6df;
+  border-radius: .5em;
+  padding: .2em .3em;
+  margin-right: .5em;
+}
