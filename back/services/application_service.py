@@ -10,10 +10,10 @@ from sqlmodel import Session
 class CRUDApplication(CRUDBase[Application, ApplicationCreate, ApplicationRead]):
     def create(self, obj_in: ApplicationCreate, session: Session) -> ApplicationRead:
         job_offer = session.get(JobOffer, obj_in.id_job_offer)
-        ats_prenotation = process_cv_and_evaluate(obj_in.cv_link, job_offer)["score"]
+        #ats_prenotation = process_cv_and_evaluate(obj_in.cv_link, job_offer)["score"]
         db_obj = Application(
             status=Status.waiting,
-            ats_prenotation=ats_prenotation,
+            ats_prenotation=obj_in.ats_prenotation,
             ats_final_note=obj_in.ats_final_note,
             feedback=obj_in.feedback,
             id_candidate=obj_in.id_candidate,
