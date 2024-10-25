@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from datetime import datetime
+from math import ceil
+from fastapi import APIRouter, Body, Depends, HTTPException
+from pydantic import BaseModel, Field, create_model
 from sqlmodel import Session
-from typing import Type, TypeVar, Generic, Callable, List, Optional, Dict, Any
+from typing import Type, TypeVar, Generic, Callable, List, Optional, Dict, Any, Union
 from back.db.database import get_session
 from sqlmodel import SQLModel
 from back.api.auth import role_required
@@ -9,13 +11,62 @@ from back.api.auth import role_required
 ModelType = TypeVar("ModelType", bound=SQLModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=SQLModel)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=SQLModel)
+    
+def generate_example(create_schema: Type[BaseModel]) -> Dict[str, Any]:
+    example = {}
+    
+    for field_name, field_info in create_schema.__fields__.items():
+        field_type = field_info.annotation
+        if field_type == str:
+            example[field_name] = "exemple"  
+        elif field_type == int:
+            example[field_name] = 1 
+        elif field_type == float:
+            example[field_name] = 1.0 
+        elif field_type == bool:
+            example[field_name] = True  
+        elif field_type == List[str]: 
+            example[field_name] = ["exemple_item"] 
+        elif field_type == Union[str, None]: 
+            example[field_name] = "exemple"  
+        elif field_type == Union[float, str, None]: 
+            example[field_name] = "exemple"  
+        elif field_type == Optional[str]:
+            example[field_name] = "exemple"
+        elif field_type == List[int]: 
+            example[field_name] = [1, 2, 3]
+        elif field_type == Optional[List[int]]:
+            example[field_name] = [1, 2, 3]  
+        elif field_type == str or field_type == Optional[str]:
+            example[field_name] = "exemple" 
+        elif field_type == datetime:  
+            example[field_name] = datetime.now().isoformat() 
+        else:
+            example[field_name] = "exemple" 
 
-class SearchQuery(BaseModel):
-    query: Dict[str, Any]
-    fields: List[str]     
-    limit: int = 10        
-    offset: int = 0        
-    exact: bool = False     
+    return example
+def generate_field_example(create_schema: Type[BaseModel]) -> List[str]:
+    schema = create_schema.schema()
+    example_fields = []
+    
+    for field_name in schema.get("properties", {}).keys():
+        example_fields.append(field_name)  
+        
+    return example_fields
+
+
+def create_search_query_model(create_schema: Type[BaseModel], tags) -> Type[BaseModel]:
+    example_query = generate_example(create_schema)
+    example_fields = generate_field_example(create_schema)
+    return create_model(
+        'SearchQuery'+tags,
+        query=(Dict[str, Any], Field(..., example=example_query)),
+        fields=(List[str], Field(..., example=example_fields)),
+        limit=(int, Field(10, example=10)),
+        offset=(int, Field(0, example=0)),
+        exact=(bool, Field(False, example=False))
+    )
+
 
 class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
     def __init__(
@@ -37,6 +88,10 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         self.prefix = prefix
         self.create_callback = create_callback 
         self.roles = roles or {}
+
+        self.search_query_model = create_search_query_model(create_schema, self.tags)
+
+
         self.generate_routes()
         
     def generate_routes(self):
@@ -92,13 +147,15 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             dependencies=[Depends(role_required(self.roles.get("search_paginated")))]
         )
         def search_paginated_items(
-            search_query: SearchQuery,
+            search_query: self.search_query_model,
             session: Session = Depends(get_session)
         ):
             if not search_query.query:
                 raise HTTPException(status_code=400, detail="Search query not provided")
             
-            search_results = self.service.search_improved(search_query.query, session, search_query.fields, search_query.exact)
+            search_results = self.service.search_improved(
+                search_query.query, session, search_query.fields, search_query.exact
+            )
 
             paginated_results = search_results[search_query.offset:search_query.offset + search_query.limit]
 
@@ -112,6 +169,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
                 "current_page": (search_query.offset // search_query.limit) + 1,
                 "page_size": search_query.limit
             }
+
         @self.router.get(
             f"{self.prefix}/{{item_id}}", 
             response_model=self.read_schema, 

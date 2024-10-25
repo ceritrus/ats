@@ -116,25 +116,36 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         matching_results = []
 
         for obj in results:
-            is_match = True
+            is_match = True  
             
             for field, value in query.items():
-                if field in fields:
+                if field in fields:  
                     if hasattr(obj, field):
                         obj_value = getattr(obj, field)
                         
-                        if isinstance(obj_value, str):
+                        if isinstance(value, int) and isinstance(obj_value, int):
+                        
                             if exact:
                                 if obj_value != value:
                                     is_match = False
                                     break
                             else:
+                            
+                                if obj_value != value:
+                                    is_match = False
+                                    break
+                        elif isinstance(obj_value, str):
+                            if exact:
+                                if obj_value != str(value):
+                                    is_match = False
+                                    break
+                            else:
                                 distance = levenshtein(obj_value, str(value))
-                                if distance > 2:
+                                if distance > 2: 
                                     is_match = False
                                     break
 
-            if is_match:
+            if is_match:  
                 matching_results.append(obj)
 
         return [self.read_schema.from_orm(obj) for obj in matching_results]

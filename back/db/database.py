@@ -3,7 +3,7 @@ from back.db.models import NeedToHaveSkill, NeedToHaveSoftSkill
 
 DATABASE_URL = "sqlite:///./ats.sqlite3" 
 
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(DATABASE_URL, echo=True, max_overflow=50)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)

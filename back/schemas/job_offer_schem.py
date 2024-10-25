@@ -1,33 +1,35 @@
 from typing import Optional
 from decimal import Decimal
 import datetime
-from sqlmodel import SQLModel
+from sqlmodel import Field, SQLModel
 from typing import List, Optional
 
 class JobOfferCreate(SQLModel):
-    job_ref: str
-    title: str
-    job_location: str
-    salary: Decimal
-    description: str
-    company_description: str
-    posted_date: Optional[datetime.date] = None
-    end_of_application: datetime.date
-    id_recruiter: int
-    skill_ids: Optional[List[int]] = []  
-    soft_skill_ids: Optional[List[int]] = []  
-class JobOfferRead(SQLModel):
-    id: int
-    job_ref: str
-    title: str
-    job_location: str
-    salary: Decimal
-    description: str
-    company_description: str
-    posted_date: datetime.date
-    end_of_application: datetime.date
-    id_recruiter: int
+    job_ref: str = Field(..., max_length=12, description="Unique reference for the job offer")
+    title: str = Field(..., max_length=50, description="Title of the job offer")
+    job_location: str = Field(..., max_length=100, description="Location of the job")
+    salary: Decimal = Field(..., gt=0, description="Salary for the job offer, must be greater than zero")
+    description: str = Field(..., description="Detailed description of the job offer")
+    company_description: str = Field(..., description="Description of the company")
+    posted_date: Optional[datetime.date] = Field(default_factory=datetime.date.today, description="Date the job was posted")
+    end_of_application: datetime.date = Field(..., description="Deadline for applications")
+    id_recruiter: int = Field(..., description="ID of the recruiter posting the job offer")
+    skill_ids: Optional[List[int]] = Field(default=None, description="List of skill IDs required for the job")
+    soft_skill_ids: Optional[List[int]] = Field(default=None, description="List of soft skill IDs required for the job")
     
+class JobOfferRead(SQLModel):
+    id: int = Field(..., description="Unique identifier for the job offer")
+    job_ref: str = Field(..., max_length=12, description="Unique reference for the job offer")
+    title: str = Field(..., max_length=50, description="Title of the job offer")
+    job_location: str = Field(..., max_length=100, description="Location of the job")
+    salary: Decimal = Field(..., gt=0, description="Salary for the job offer, must be greater than zero")
+    description: str = Field(..., description="Detailed description of the job offer")
+    company_description: str = Field(..., description="Description of the company")
+    posted_date: datetime.date = Field(..., description="Date the job was posted")
+    end_of_application: datetime.date = Field(..., description="Deadline for applications")
+    id_recruiter: int = Field(..., description="ID of the recruiter posting the job offer")
+    skill_ids: Optional[List[int]] = Field(default=None, description="List of skill IDs required for the job")
+    soft_skill_ids: Optional[List[int]] = Field(default=None, description="List of soft skill IDs required for the job")
 
     class Config:
         orm_mode = True
