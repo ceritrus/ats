@@ -109,43 +109,67 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         if db_obj:
             return levenshtein(db_obj.name, reference_word)
         return None
-    def search_improved(self, query: Dict[str, Any], session: Session, fields: List[str], exact: bool = False) -> List[ReadSchemaType]:
+    def search_improved(
+        self, 
+        query: Dict[str, Any], 
+        session: Session, 
+        fields: List[str], 
+        exact: bool = False,
+        sort_by: Optional[str] = None,
+        order: str = "asc"
+    ) -> List[ReadSchemaType]:
+
         statement = select(self.model)
         results = session.exec(statement).all()
 
         matching_results = []
 
         for obj in results:
-            is_match = True  
-            
+            is_match = True
+
             for field, value in query.items():
-                if field in fields:  
+                if field in fields:
                     if hasattr(obj, field):
                         obj_value = getattr(obj, field)
-                        
-                        if isinstance(value, int) and isinstance(obj_value, int):
-                        
-                            if exact:
-                                if obj_value != value:
-                                    is_match = False
-                                    break
-                            else:
-                            
-                                if obj_value != value:
-                                    is_match = False
-                                    break
-                        elif isinstance(obj_value, str):
-                            if exact:
-                                if obj_value != str(value):
-                                    is_match = False
-                                    break
-                            else:
-                                distance = levenshtein(obj_value, str(value))
-                                if distance > 2: 
-                                    is_match = False
-                                    break
 
-            if is_match:  
+                        if obj_value is None:
+                            is_match = False
+                            continue
+
+                        if isinstance(value, list):
+                            if exact:
+                                if obj_value not in value:
+                                    is_match = False
+                                    break
+                            else:
+                                if not any(levenshtein(str(obj_value), str(v)) <= 2 for v in value):
+                                    is_match = False
+                                    break
+                        else:
+                            if isinstance(value, int) and isinstance(obj_value, int):
+                                if exact:
+                                    if obj_value != value:
+                                        is_match = False
+                                        break
+                                else:
+                                    if obj_value != value:
+                                        is_match = False
+                                        break
+                            elif isinstance(obj_value, str):
+                                if exact:
+                                    if obj_value != str(value):
+                                        is_match = False
+                                        break
+                                else:
+                                    distance = levenshtein(obj_value, str(value))
+                                    if distance > 2:
+                                        is_match = False
+                                        break
+
+            if is_match:
                 matching_results.append(obj)
+
+        if sort_by and hasattr(self.model, sort_by):
+            matching_results.sort(key=lambda obj: getattr(obj, sort_by), reverse=(order == "desc"))
 
         return [self.read_schema.from_orm(obj) for obj in matching_results]

@@ -11,7 +11,7 @@ from back.api.auth import role_required
 ModelType = TypeVar("ModelType", bound=SQLModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=SQLModel)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=SQLModel)
-    
+
 def generate_example(create_schema: Type[BaseModel]) -> Dict[str, Any]:
     example = {}
     
@@ -45,6 +45,7 @@ def generate_example(create_schema: Type[BaseModel]) -> Dict[str, Any]:
             example[field_name] = "exemple" 
 
     return example
+
 def generate_field_example(create_schema: Type[BaseModel]) -> List[str]:
     schema = create_schema.schema()
     example_fields = []
@@ -54,19 +55,19 @@ def generate_field_example(create_schema: Type[BaseModel]) -> List[str]:
         
     return example_fields
 
-
 def create_search_query_model(create_schema: Type[BaseModel], tags) -> Type[BaseModel]:
     example_query = generate_example(create_schema)
     example_fields = generate_field_example(create_schema)
     return create_model(
-        'SearchQuery'+tags,
+        'SearchQuery' + tags,
         query=(Dict[str, Any], Field(..., example=example_query)),
         fields=(List[str], Field(..., example=example_fields)),
         limit=(int, Field(10, example=10)),
         offset=(int, Field(0, example=0)),
-        exact=(bool, Field(False, example=False))
+        exact=(bool, Field(False, example=False)),
+        sort_by=(Optional[str], Field(None, example="Optional sort field")),
+        order=(str, Field("asc", example="asc or desc"))
     )
-
 
 class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
     def __init__(
@@ -90,7 +91,6 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
         self.roles = roles or {}
 
         self.search_query_model = create_search_query_model(create_schema, self.tags)
-
 
         self.generate_routes()
         
@@ -133,13 +133,14 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             f"{self.prefix}/search", 
             response_model=List[self.read_schema], 
             tags=[self.tags],
-            dependencies=[Depends(role_required(self.roles.get("search")))]  # Dépendances selon les rôles
+            dependencies=[Depends(role_required(self.roles.get("search")))]  
         )
         def search_items(query: str, field: Optional[str], session: Session = Depends(get_session)):
             if not query:
                 raise HTTPException(status_code=400, detail="Search query not provided")
             results = self.service.search(query, session, field)
             return [self.read_schema.from_orm(item) for item in results]
+        
         @self.router.post(
             f"{self.prefix}/search_paginated", 
             response_model=Dict[str, Any], 
@@ -156,6 +157,10 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             search_results = self.service.search_improved(
                 search_query.query, session, search_query.fields, search_query.exact
             )
+
+            # Tri des résultats si 'sort_by' est fourni
+            if search_query.sort_by:
+                search_results.sort(key=lambda item: getattr(item, search_query.sort_by), reverse=(search_query.order == "desc"))
 
             paginated_results = search_results[search_query.offset:search_query.offset + search_query.limit]
 
@@ -174,7 +179,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             f"{self.prefix}/{{item_id}}", 
             response_model=self.read_schema, 
             tags=[self.tags],
-            dependencies=[Depends(role_required(self.roles.get("read")))]  # Dépendances selon les rôles
+            dependencies=[Depends(role_required(self.roles.get("read")))]  
         )
         def read_item(item_id: int, session: Session = Depends(get_session)):
             item = self.service.get(item_id, session)
@@ -186,7 +191,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             f"{self.prefix}/{{item_id}}", 
             response_model=self.read_schema, 
             tags=[self.tags],
-            dependencies=[Depends(role_required(self.roles.get("update")))]  # Dépendances selon les rôles
+            dependencies=[Depends(role_required(self.roles.get("update")))]  
         )
         def update_item(
             item_id: int,
@@ -202,7 +207,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             f"{self.prefix}/{{item_id}}", 
             response_model=dict, 
             tags=[self.tags],
-            dependencies=[Depends(role_required(self.roles.get("delete")))]  # Dépendances selon les rôles
+            dependencies=[Depends(role_required(self.roles.get("delete")))]  
         )
         def delete_item(item_id: int, session: Session = Depends(get_session)):
             success = self.service.delete(item_id, session)
@@ -214,7 +219,7 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             f"{self.prefix}/", 
             response_model=List[self.read_schema], 
             tags=[self.tags],
-            dependencies=[Depends(role_required(self.roles.get("get_all")))]  # Dépendances selon les rôles
+            dependencies=[Depends(role_required(self.roles.get("get_all")))]  
         )
         def get_all_items(session: Session = Depends(get_session)):
             items = self.service.get_all(session)
