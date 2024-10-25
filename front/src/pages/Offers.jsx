@@ -23,7 +23,7 @@ export default function Offers() {
     const request = async () => {
       try {
         const response = await Fetch("/api/job-offer");
-        setData(response);
+        setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

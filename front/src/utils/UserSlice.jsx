@@ -11,19 +11,15 @@ export const userSlice = createSlice({
   reducers: {
     setID: (state, action) => {
       state.id = action.payload;
-      //   console.log("ID:", action.payload);
     },
     setName: (state, action) => {
       state.name = action.payload;
-      //   console.log("Name:", action.payload);
     },
     setEmail: (state, action) => {
       state.email = action.payload;
-      //   console.log("Email:", action.payload);
     },
     setRole: (state, action) => {
       state.role = action.payload;
-      //   console.log("Role:", action.payload);
     },
   },
 });

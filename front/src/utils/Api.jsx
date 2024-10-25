@@ -22,3 +22,22 @@ export async function Post(url, data) {
     console.error("Error posting data:", error);
   }
 }
+
+export async function Put(url, data) {
+  try {
+    if (localStorage.getItem("token")) {
+      const response = await axios.put(`${back}${url}`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          ContentType: "application/json",
+        },
+      });
+      return response;
+    } else {
+      const response = await axios.put(`${back}${url}`, data);
+      return response;
+    }
+  } catch (error) {
+    console.error("Error putting data:", error);
+  }
+}

@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { Fetch } from "../utils/Api";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Fetch, Put } from "../utils/Api";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { setID, setName, setEmail, setRole } from "../utils/UserSlice";
+import { Button, Card, Col, Container, Row, Form } from "react-bootstrap";
 
-export default function Profile() {
+export default function ProfileEdit() {
   const [currentUser, setUser] = useState(null);
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [email, setCurrentEmail] = useState(user.email ? user.email : "");
 
   useEffect(() => {
     if (!user.id) {
@@ -30,17 +31,30 @@ export default function Profile() {
     }
   }, [user.id]);
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    Put("/api/user/" + user.id, {
+      email: email,
+      password: currentUser.password,
+      username: currentUser.username,
+    })
+      .then((response) => {
+        dispatch(setEmail(email));
+        navigate("/profile");
+      })
+      .catch((error) => {
+        console.error("Login failed:", error);
+      });
+  };
+
   return (
     <Container>
       <Navbar />
       <Container className="profile">
         <Row className="header">
           <Col>
-            <h1>Profile</h1>
+            <h1>Modifier le profil</h1>
           </Col>
-          <Link to={"/profile/edit"} className="btn btn-primary">
-            [ ✏️ MODIFIER ]
-          </Link>
         </Row>
         <Row>
           <Col>
@@ -49,25 +63,23 @@ export default function Profile() {
                 <Card.Text>
                   <strong>Nom d'utilisateur:</strong> {user?.email}
                 </Card.Text>
-                <Card.Text>
-                  <strong>Email:</strong> {user?.email}
-                </Card.Text>
-                <Card.Text>
-                  <strong>Role:</strong> {user?.role}
-                </Card.Text>
-                <Button
-                  className="logout"
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    dispatch(setID(null));
-                    dispatch(setName(null));
-                    dispatch(setEmail(null));
-                    dispatch(setRole(null));
-                    navigate("/");
-                  }}
-                >
-                  Décconnexion
-                </Button>
+                <Form onSubmit={handleSubmit}>
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setCurrentEmail(e.target.value)}
+                    />
+                  </Form.Group>
+                  <Card.Text>
+                    <strong>Role:</strong> {user?.role}
+                  </Card.Text>
+                  <Button variant="primary" type="submit" className="w-100">
+                    Valider
+                  </Button>
+                </Form>
               </Card.Body>
             </Card>
           </Col>
