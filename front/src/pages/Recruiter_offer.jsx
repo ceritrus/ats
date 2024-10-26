@@ -51,7 +51,6 @@ export default function Recruiter_offer() {
   
     return (
         <div>
-            <Navbar />
             <div className="offers">
                 <h1>Mes offres d'emploi publiées</h1>
                 <Paper sx={{ height: "90%", width: "100%" }}>
