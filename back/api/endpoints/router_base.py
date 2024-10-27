@@ -11,6 +11,7 @@ from back.api.auth import role_required
 ModelType = TypeVar("ModelType", bound=SQLModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=SQLModel)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=SQLModel)
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound=SQLModel)
 
 def generate_example(create_schema: Type[BaseModel]) -> Dict[str, Any]:
     example = {}
@@ -69,25 +70,27 @@ def create_search_query_model(create_schema: Type[BaseModel], tags) -> Type[Base
         order=(str, Field("asc", example="asc or desc"))
     )
 
-class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
+class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType, UpdateSchemaType]):
     def __init__(
         self,
         tags: str,
         service: Callable[..., object],
         create_schema: Type[CreateSchemaType],
         read_schema: Type[ReadSchemaType],
+        update_schema: Type[UpdateSchemaType], 
         prefix: str,
         router: APIRouter = APIRouter(),
         create_callback: Optional[Callable[..., object]] = None,
-        roles: Dict[str, List[str]] = None  
+        roles: Dict[str, List[str]] = None
     ):
         self.service = service
         self.tags = tags
         self.create_schema = create_schema
         self.read_schema = read_schema
+        self.update_schema = update_schema 
         self.router = router
         self.prefix = prefix
-        self.create_callback = create_callback 
+        self.create_callback = create_callback
         self.roles = roles or {}
 
         self.search_query_model = create_search_query_model(create_schema, self.tags)
@@ -157,8 +160,6 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             search_results = self.service.search_improved(
                 search_query.query, session, search_query.fields, search_query.exact
             )
-
-            # Tri des résultats si 'sort_by' est fourni
             if search_query.sort_by:
                 search_results.sort(key=lambda item: getattr(item, search_query.sort_by), reverse=(search_query.order == "desc"))
 
@@ -188,21 +189,21 @@ class CRUDRouter(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             return self.read_schema.from_orm(item)
 
         @self.router.put(
-            f"{self.prefix}/{{item_id}}", 
-            response_model=self.read_schema, 
+            f"{self.prefix}/{{item_id}}",
+            response_model=self.read_schema,
             tags=[self.tags],
-            dependencies=[Depends(role_required(self.roles.get("update")))]  
+            dependencies=[Depends(role_required(self.roles.get("update")))]
         )
         def update_item(
             item_id: int,
-            item: self.create_schema,
+            item: self.update_schema, 
             session: Session = Depends(get_session),
         ):
+            print(f"Updating item with ID {item_id} and data {item}")
             updated_item = self.service.update(item_id, item, session)
             if updated_item is None:
                 raise HTTPException(status_code=404, detail="Item not found")
             return self.read_schema.from_orm(updated_item)
-
         @self.router.delete(
             f"{self.prefix}/{{item_id}}", 
             response_model=dict, 

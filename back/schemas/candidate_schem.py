@@ -9,10 +9,10 @@ class CandidateBase(SQLModel):
     id_user: int
 
 class CandidateUpdate(SQLModel):
-    first_name: Optional[str] = Field(max_length=50)
-    last_name: Optional[str] = Field(max_length=100)
-    phone_number: Optional[str] = Field(max_length=10)
-    cv_link: Optional[str] = Field(max_length=100)
+    first_name: Optional[str] = Field(default=None,max_length=50)
+    last_name: Optional[str] = Field(default=None,max_length=100)
+    phone_number: Optional[str] = Field(default=None,max_length=10)
+    cv_link: Optional[str] = Field(default=None,max_length=100)
 
 class CandidateCreate(CandidateBase):
     pass
