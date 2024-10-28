@@ -1,11 +1,11 @@
 from back.db.models.JobOffer import JobOffer
-from back.schemas.job_offer_schem import JobOfferRead, JobOfferCreate
+from back.schemas.job_offer_schem import JobOfferRead, JobOfferCreate, JobOfferUpdate
 from sqlmodel import Session, select
 from back.services.crud_base import CRUDBase
 from back.db.models import Skill, SoftSkill
 from typing import Optional
 
-class CRUDJobOffer(CRUDBase[JobOffer, JobOfferCreate, JobOfferRead]):
+class CRUDJobOffer(CRUDBase[JobOffer, JobOfferCreate, JobOfferRead, JobOfferUpdate]):
     def create(self, obj_in: JobOfferCreate, session: Session) -> JobOfferRead:
         db_obj = JobOffer(**obj_in.dict(exclude={"skill_ids", "soft_skill_ids"}))
 
@@ -43,4 +43,4 @@ class CRUDJobOffer(CRUDBase[JobOffer, JobOfferCreate, JobOfferRead]):
         session.refresh(db_obj)
         return self.read_schema.from_orm(db_obj)
 
-crud_job_offer = CRUDJobOffer(JobOffer, JobOfferRead)
+crud_job_offer = CRUDJobOffer(JobOffer, JobOfferRead, JobOfferUpdate)

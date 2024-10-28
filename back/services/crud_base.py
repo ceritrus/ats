@@ -8,11 +8,13 @@ from sqlalchemy import func
 ModelType = TypeVar("ModelType", bound=SQLModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=SQLModel)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=SQLModel)
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound=SQLModel)
 
-class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
-    def __init__(self, model: Type[ModelType], read_schema: Type[ReadSchemaType]):
+class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, UpdateSchemaType]):
+    def __init__(self, model: Type[ModelType], read_schema: Type[ReadSchemaType], update_schema: Type[UpdateSchemaType]):
         self.model = model
         self.read_schema = read_schema  
+        self.update_schema = update_schema
 
     def create(self, obj_in: CreateSchemaType, session: Session) -> ReadSchemaType:
         db_obj = self.model(**obj_in.dict())
@@ -58,11 +60,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType]):
             "page_size": limit
         }
     
-    def update(self, obj_id: int, obj_in: CreateSchemaType, session: Session) -> Optional[ReadSchemaType]:
+    def update(self, obj_id: int, obj_in: UpdateSchemaType, session: Session) -> Optional[ReadSchemaType]:
         statement = select(self.model).where(self.model.id == obj_id)
         db_obj = session.exec(statement).first()
         if db_obj:
-            for key, value in obj_in.dict().items():
+            update_data = obj_in.dict(exclude_unset=True) 
+            for key, value in update_data.items():
                 setattr(db_obj, key, value)
             session.commit()
             session.refresh(db_obj)

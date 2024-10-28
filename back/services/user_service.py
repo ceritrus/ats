@@ -1,11 +1,11 @@
 from sqlmodel import Session, select
 from back.db.models.User import User
-from back.schemas.user_schem import UserRead, UserCreate
+from back.schemas.user_schem import UserRead, UserCreate, UserUpdate
 from back.services.crud_base import CRUDBase
 from back.utils.password_utils import hash_password
 from typing import Optional
 
-class CRUDUser(CRUDBase[User, UserCreate, UserRead]):
+class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserUpdate]):
     def create(self, obj_in: UserCreate, session: Session) -> UserRead:
         hashed_password = hash_password(obj_in.password)
         db_obj = User(
@@ -23,4 +23,4 @@ class CRUDUser(CRUDBase[User, UserCreate, UserRead]):
         obj = session.exec(statement).first()
         return self.read_schema.from_orm(obj) if obj else None
 
-crud_user = CRUDUser(User, UserRead)
+crud_user = CRUDUser(User, UserRead, UserUpdate)

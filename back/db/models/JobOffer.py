@@ -1,14 +1,31 @@
+from enum import Enum
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy.dialects.sqlite import TEXT
 from decimal import Decimal
 import datetime
+from sqlalchemy import Enum as SQLAlchemyEnum
 from typing import List, Optional
+
+class Graduate(Enum):
+    undergraduate = "Premier cycle universitaire"
+    dut = "DUT"
+    but = "BUT"
+    bts = "BTS"
+    bachelor = "Licence"
+    master = "Master"
+    phd = "Doctorat"
+    postdoctoral = "Post-doctorat"
+    diploma = "Diplôme spécialisé"
+    certificate = "Certificat"
+
 
 class JobOffer(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     job_ref: str = Field(max_length=12)
     title: str = Field(max_length=50)
     job_location: str = Field(max_length=100)
+    graduate: Graduate = Field(sa_column=Column(SQLAlchemyEnum(Graduate)))
+    experience: int = Field(default=0)
     salary: Decimal = Field(0.0)
     description: str = Field(sa_column=Column(TEXT))
     company_description: str = Field(sa_column=Column(TEXT))
