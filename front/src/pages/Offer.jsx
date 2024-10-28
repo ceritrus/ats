@@ -22,7 +22,6 @@ export default function Offer() {
 
   return (
     <div>
-      <Navbar />
       <div className="offer">
         <div className="header">
           <h1>{offer.title}</h1>

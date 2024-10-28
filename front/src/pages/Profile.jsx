@@ -31,48 +31,45 @@ export default function Profile() {
   }, [user.id]);
 
   return (
-    <Container>
-      <Navbar />
-      <Container className="profile">
-        <Row className="header">
-          <Col>
-            <h1>Profile</h1>
-          </Col>
-          <Link to={"/profile/edit"} className="btn btn-primary">
-            [ ✏️ MODIFIER ]
-          </Link>
-        </Row>
-        <Row>
-          <Col>
-            <Card>
-              <Card.Body>
-                <Card.Text>
-                  <strong>Nom d'utilisateur:</strong> {user?.name}
-                </Card.Text>
-                <Card.Text>
-                  <strong>Email:</strong> {user?.email}
-                </Card.Text>
-                <Card.Text>
-                  <strong>Role:</strong> {user?.role}
-                </Card.Text>
-                <Button
-                  className="logout"
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    dispatch(setID(null));
-                    dispatch(setName(null));
-                    dispatch(setEmail(null));
-                    dispatch(setRole(null));
-                    navigate("/");
-                  }}
-                >
-                  Décconnexion
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+    <Container className="profile">
+      <Row className="header">
+        <Col>
+          <h1>Profile</h1>
+        </Col>
+        <Link to={"/profile/edit"} className="btn btn-primary">
+          [ ✏️ MODIFIER ]
+        </Link>
+      </Row>
+      <Row>
+        <Col>
+          <Card>
+            <Card.Body>
+              <Card.Text>
+                <strong>Nom d'utilisateur:</strong> {user?.name}
+              </Card.Text>
+              <Card.Text>
+                <strong>Email:</strong> {user?.email}
+              </Card.Text>
+              <Card.Text>
+                <strong>Role:</strong> {user?.role}
+              </Card.Text>
+              <Button
+                className="logout"
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  dispatch(setID(null));
+                  dispatch(setName(null));
+                  dispatch(setEmail(null));
+                  dispatch(setRole(null));
+                  navigate("/");
+                }}
+              >
+                Décconnexion
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 }

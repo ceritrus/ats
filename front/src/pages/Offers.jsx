@@ -34,7 +34,6 @@ export default function Offers() {
 
   return (
     <div>
-      <Navbar />
       <div className="offers">
         <h1>Offres</h1>
         <Paper sx={{ height: "90%", width: "100%" }}>

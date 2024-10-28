@@ -20,7 +20,6 @@ export default function Home() {
 
   return (
     <div>
-      <Navbar />
       <div className="home">
         <div className="left-column">
           <h1>

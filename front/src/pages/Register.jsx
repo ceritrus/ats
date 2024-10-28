@@ -52,73 +52,70 @@ export default function Register() {
   };
 
   return (
-    <Container>
-      <Navbar />
-      <Container className="login">
-        <Row>
-          <Col>
-            <h1>Créer un compte</h1>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card>
-              <Card.Body>
-                <Form onSubmit={handleSubmit}>
-                  <Form.Group className="mb-3" controlId="formBasicUsername">
-                    <Form.Label>Nom d'utilisateur:</Form.Label>
-                    <Form.Control
-                      type="username"
-                      placeholder="Entrez votre nom d'utilisateur"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                    />
-                  </Form.Group>
+    <Container className="login">
+      <Row>
+        <Col>
+          <h1>Créer un compte</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Card>
+            <Card.Body>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="formBasicUsername">
+                  <Form.Label>Nom d'utilisateur:</Form.Label>
+                  <Form.Control
+                    type="username"
+                    placeholder="Entrez votre nom d'utilisateur"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </Form.Group>
 
-                  <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email:</Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="Entrez votre adresse mail"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </Form.Group>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label>Email:</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Entrez votre adresse mail"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Form.Group>
 
-                  <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Mot de passe:</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Entrez votre mot de passe"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </Form.Group>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label>Mot de passe:</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Entrez votre mot de passe"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </Form.Group>
 
-                  <Form.Group
-                    className="mb-3"
-                    controlId="formBasicPasswordConfirmation"
-                  >
-                    <Form.Label>Confirmer le mot de passe:</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Entrez votre mot de passe"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
-                  </Form.Group>
-                  {showError && error}
-                  <Container className="login-footer">
-                    <Button variant="primary" type="submit" className="w-100">
-                      Valider
-                    </Button>
-                  </Container>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+                <Form.Group
+                  className="mb-3"
+                  controlId="formBasicPasswordConfirmation"
+                >
+                  <Form.Label>Confirmer le mot de passe:</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Entrez votre mot de passe"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </Form.Group>
+                {showError && error}
+                <Container className="login-footer">
+                  <Button variant="primary" type="submit" className="w-100">
+                    Valider
+                  </Button>
+                </Container>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 }

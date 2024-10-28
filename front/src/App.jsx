@@ -10,10 +10,13 @@ import Register from "./pages/Register";
 import Application_offer from "./pages/Application_offer";
 import Recruiter_offer from "./pages/Recruiter_offer";
 import About_candidate from "./pages/About_candidate";
+import NotFound from "./pages/NotFound";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <div className="App">
+      <Navbar />
       <Routes>
         <Route index element={<Home />} />
         <Route path="/offers" element={<Offers />} />
@@ -28,6 +31,7 @@ function App() {
         <Route path="/profile/edit" element={<ProfileEdit />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );

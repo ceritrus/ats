@@ -47,53 +47,50 @@ export default function Login() {
   };
 
   return (
-    <Container>
-      <Navbar />
-      <Container className="login">
-        <Row>
-          <Col>
-            <h1>Connexion</h1>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card>
-              <Card.Body>
-                <Form onSubmit={handleSubmit}>
-                  <Form.Group className="mb-3" controlId="formBasicUsername">
-                    <Form.Label>Nom d'utilisateur:</Form.Label>
-                    <Form.Control
-                      type="username"
-                      placeholder="Entrez votre nom d'utilisateur"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                    />
-                  </Form.Group>
+    <Container className="login">
+      <Row>
+        <Col>
+          <h1>Connexion</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Card>
+            <Card.Body>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="formBasicUsername">
+                  <Form.Label>Nom d'utilisateur:</Form.Label>
+                  <Form.Control
+                    type="username"
+                    placeholder="Entrez votre nom d'utilisateur"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </Form.Group>
 
-                  <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Mot de passe:</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Entrez votre mot de passe"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </Form.Group>
-                  {showError && error}
-                  <Container className="login-footer">
-                    <Button variant="primary" type="submit" className="w-100">
-                      Connexion
-                    </Button>
-                    <Link to="/register" className="btn btn-link">
-                      Pas encore inscrit ?
-                    </Link>
-                  </Container>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label>Mot de passe:</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Entrez votre mot de passe"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </Form.Group>
+                {showError && error}
+                <Container className="login-footer">
+                  <Button variant="primary" type="submit" className="w-100">
+                    Connexion
+                  </Button>
+                  <Link to="/register" className="btn btn-link">
+                    Pas encore inscrit ?
+                  </Link>
+                </Container>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 }

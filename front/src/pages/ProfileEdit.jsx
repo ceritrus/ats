@@ -48,43 +48,40 @@ export default function ProfileEdit() {
   };
 
   return (
-    <Container>
-      <Navbar />
-      <Container className="profile">
-        <Row className="header">
-          <Col>
-            <h1>Modifier le profil</h1>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card>
-              <Card.Body>
+    <Container className="profile">
+      <Row className="header">
+        <Col>
+          <h1>Modifier le profil</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Card>
+            <Card.Body>
+              <Card.Text>
+                <strong>Nom d'utilisateur:</strong> {user?.name}
+              </Card.Text>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setCurrentEmail(e.target.value)}
+                  />
+                </Form.Group>
                 <Card.Text>
-                  <strong>Nom d'utilisateur:</strong> {user?.name}
+                  <strong>Role:</strong> {user?.role}
                 </Card.Text>
-                <Form onSubmit={handleSubmit}>
-                  <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setCurrentEmail(e.target.value)}
-                    />
-                  </Form.Group>
-                  <Card.Text>
-                    <strong>Role:</strong> {user?.role}
-                  </Card.Text>
-                  <Button variant="primary" type="submit" className="w-100">
-                    Valider
-                  </Button>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+                <Button variant="primary" type="submit" className="w-100">
+                  Valider
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 }
