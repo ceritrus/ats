@@ -27,3 +27,19 @@ export async function Post(url, data) {
     console.error("Error posting data:", error);
   }
 }
+
+export async function Put(url, data) {
+  try {
+    const response = await fetch(`${back}${url}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error posting data:", error);
+  }
+}
