@@ -10,8 +10,8 @@ export default function Offer() {
   useEffect(() => {
     const request = async () => {
       try {
-        const response = await Fetch("/api/v1/job-offer/" + String(id));
-        setOffer(response);
+        const response = await Fetch("/api/job-offer/" + String(id));
+        setOffer(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -25,7 +25,13 @@ export default function Offer() {
       <div className="offer">
         <div className="header">
           <h1>{offer.title}</h1>
-          <button>Postuler</button>
+          <button
+            onClick={(e) => {
+              console.log(e);
+            }}
+          >
+            Postuler
+          </button>
         </div>
         <section className="description">
           {offer.company_description} - 31000, Toulouse
