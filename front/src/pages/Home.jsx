@@ -9,7 +9,7 @@ export default function Home() {
   useEffect(() => {
     const request = async () => {
       try {
-        setData(await Fetch("/"));
+        setData((await Fetch("/")).data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -20,7 +20,6 @@ export default function Home() {
 
   return (
     <div>
-      <Navbar />
       <div className="home">
         <div className="left-column">
           <h1>
