@@ -47,7 +47,6 @@ export default function About_candidate() {
 
   return (
     <div>
-      <Navbar />
       <div className="container">
         <div style={{ display: 'flex' }}>
           <div style={{ width: '40%' }}>

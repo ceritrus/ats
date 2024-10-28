@@ -22,8 +22,8 @@ export default function Offers() {
   useEffect(() => {
     const request = async () => {
       try {
-        const response = await Fetch("/api/v1/job-offer");
-        setData(response);
+        const response = await Fetch("/api/job-offer");
+        setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -34,7 +34,6 @@ export default function Offers() {
 
   return (
     <div>
-      <Navbar />
       <div className="offers">
         <h1>Offres</h1>
         <Paper sx={{ height: "90%", width: "100%" }}>
