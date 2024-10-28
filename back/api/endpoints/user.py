@@ -1,4 +1,4 @@
-from back.schemas.user_schem import UserCreate, UserRead
+from back.schemas.user_schem import UserCreate, UserRead, UserUpdate
 from back.services.user_service import crud_user
 from back.api.endpoints.router_base import CRUDRouter
 from sqlmodel import Session
@@ -12,6 +12,7 @@ user_crud_router = CRUDRouter(
     service=crud_user,
     create_schema=UserCreate,
     read_schema=UserRead,
+    update_schema=UserUpdate,
     prefix="/user",
     tags="User",
     create_callback=custom_create_user,
