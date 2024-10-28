@@ -2,7 +2,7 @@ from back.db.models.Application import Application, Status
 from back.schemas.application_schem import ApplicationRead, ApplicationCreate, ApplicationUpdate
 from back.services.crud_base import CRUDBase
 from back.db.models.JobOffer import JobOffer
-from back.utils.cv_extractor_utils import process_cv_and_evaluate
+#from back.utils.cv_extractor_utils import process_cv_and_evaluate
 from sqlmodel import Session
 
 
