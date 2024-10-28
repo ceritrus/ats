@@ -61,7 +61,7 @@ export default function ProfileEdit() {
             <Card>
               <Card.Body>
                 <Card.Text>
-                  <strong>Nom d'utilisateur:</strong> {user?.email}
+                  <strong>Nom d'utilisateur:</strong> {user?.name}
                 </Card.Text>
                 <Form onSubmit={handleSubmit}>
                   <Form.Group className="mb-3" controlId="formBasicEmail">

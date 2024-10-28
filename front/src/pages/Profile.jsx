@@ -47,7 +47,7 @@ export default function Profile() {
             <Card>
               <Card.Body>
                 <Card.Text>
-                  <strong>Nom d'utilisateur:</strong> {user?.email}
+                  <strong>Nom d'utilisateur:</strong> {user?.name}
                 </Card.Text>
                 <Card.Text>
                   <strong>Email:</strong> {user?.email}
