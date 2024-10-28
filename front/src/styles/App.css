@@ -241,6 +241,20 @@
   color: white;
 }
 
+.container {
+  background: linear-gradient(45deg, #22a6b3, #98d9e0);
+  margin: 0em;
+  padding: 3em;
+  margin: 4em;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  color: white;
+  text-shadow: 1px 1px 1px rgb(0, 0, 0);
+  border-radius: .25em;
+  box-shadow: 0 0 1em 0.2em #00000027;
+}
 .offer {
   background: linear-gradient(45deg, #22a6b3, #7ed6df);
   padding: 3em;

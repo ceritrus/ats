@@ -22,7 +22,6 @@ export async function Post(url, data) {
     console.error("Error posting data:", error);
   }
 }
-
 export async function Put(url, data) {
   try {
     if (localStorage.getItem("token")) {
