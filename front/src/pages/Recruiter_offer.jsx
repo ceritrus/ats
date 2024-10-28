@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
 import { Post, Put } from "../utils/Api";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { useNavigate } from "react-router-dom";
 import { Button, Modal, Box, TextField } from "@mui/material";
+import { useSelector } from "react-redux";
 
 export default function Recruiter_offer() {
     const [data, setData] = useState([]);
@@ -24,23 +24,35 @@ export default function Recruiter_offer() {
         soft_skill_ids: []
     });
     const navigate = useNavigate();
+    const user = useSelector((state) => state.user);
 
     useEffect(() => {
-        const request = async () => {
+        const fetchData = async () => {
             try {
-                const response = await Post("/api/job-offer/search_paginated", {
-                    query: { id_recruiter: 1 },
-                    fields: ["id_recruiter"],
+                const recruiterResponse = await Post("/api/recruiter/search_paginated", {
+                    query: { id_user: user.id },
+                    fields: ["id_user"],
                     limit: 10,
                     offset: 0,
                     exact: true,
                 });
-                setData(response);
+
+                if (recruiterResponse) {
+                    const id =recruiterResponse.data.items[0].id;
+                    const offerResponse = await Post("/api/job-offer/search_paginated", {
+                        query: { id_recruiter: id },
+                        fields: ["id_recruiter"],
+                        limit: 10,
+                        offset: 0,
+                        exact: true,
+                    });
+                    setData(offerResponse.data.items);
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
-        request();
+        fetchData();
     }, []);
 
     const handleOpenModal = (job) => {
@@ -89,13 +101,10 @@ export default function Recruiter_offer() {
                 skill_ids: formValues.skill_ids,
                 soft_skill_ids: formValues.soft_skill_ids
             };
-            console.log(selectedJob.id)
-            console.log(updatedJob)
             await Put(`/api/job-offer/${selectedJob.id}`, updatedJob);
             setOpenModal(false);
             setSelectedJob(null);
             window.location.reload();
-            
         } catch (error) {
             console.error("Erreur :", error);
         }
@@ -133,7 +142,7 @@ export default function Recruiter_offer() {
                 <h1>Mes offres d'emploi publiées</h1>
                 <Paper sx={{ height: "90%", width: "100%" }}>
                     <DataGrid
-                        rows={data.items}
+                        rows={data}
                         columns={columns}
                         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
                         pageSizeOptions={[5, 10, 50]}
