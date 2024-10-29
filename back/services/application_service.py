@@ -20,6 +20,7 @@ class CRUDApplication(CRUDBase[Application, ApplicationCreate, ApplicationRead, 
             ats_final_note=ats_final_note,
             cv_link=obj_in.cv_link,
             feedback=obj_in.feedback,
+            applicant_message=obj_in.applicant_message,
             id_candidate=obj_in.id_candidate,
             id_job_offer=obj_in.id_job_offer
         )

@@ -18,6 +18,7 @@ class Application(SQLModel, table=True):
     ats_prenotation: Decimal = Field(default=0, max_digits=3, decimal_places=2)
     ats_final_note : Decimal = Field(default=0, max_digits=3, decimal_places=2)
     feedback: str = Field(sa_column=Column(TEXT))
+    applicant_message: str = Field(default=None, max_length=1500)
     cv_link: str = Field(max_length=100)
     id_candidate: int = Field(foreign_key="candidate.id")    
     id_job_offer: int = Field(foreign_key="joboffer.id")
