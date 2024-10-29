@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Fetch, Post, Put } from "../utils/Api";
 import { Button, Card, Col, Container, Row, Form } from "react-bootstrap";
-import Navbar from "../components/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
 import { setID, setName, setEmail, setRole } from "../utils/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
