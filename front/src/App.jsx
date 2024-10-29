@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Application_offer from "./pages/Application_offer";
 import Recruiter_offer from "./pages/Recruiter_offer";
 import About_candidate from "./pages/About_candidate";
+import Apply from "./pages/Apply";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="/offers" element={<Offers />} />
         <Route path="/recruiter_offer" element={<Recruiter_offer />} />
         <Route path="/application_offer/:id" element={<Application_offer />} />
+        <Route path="/apply/:id" element={<Apply />} />
         <Route
           path="/about_candidate/:application_id/:candidate_id"
           element={<About_candidate />}

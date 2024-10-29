@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { Fetch } from "../utils/Api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Offer() {
   const [offer, setOffer] = useState({});
+  const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -26,8 +27,8 @@ export default function Offer() {
         <div className="header">
           <h1>{offer.title}</h1>
           <button
-            onClick={(e) => {
-              console.log(e);
+            onClick={() => {
+              navigate("/apply/" + id);
             }}
           >
             Postuler
