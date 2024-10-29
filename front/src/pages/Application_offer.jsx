@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { Post, Fetch } from "../utils/Api";
+import { Post, Fetch, Put } from "../utils/Api";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { useNavigate, useParams } from "react-router-dom";
-
-const columns = [
-    { field: "last_name", headerName: "NOM", minWidth: 300 },
-    { field: "first_name", headerName: "PRENOM", minWidth: 300 },
-    { field: "application_date", headerName: "DATE DE CANDIDATURE", minWidth: 170 },
-    { field: "status", headerName: "SATUT DE LA CANDIDATURE", minWidth: 170 },
-    { field: "feedback", headerName: "COMMENTAIRE", minWidth: 170 },
-    { field: "ats_final_note", headerName: "NOTATION", minWidth: 170 },
-];
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 const paginationModel = { page: 0, pageSize: 10 };
 
@@ -20,9 +13,31 @@ export default function Application_offer() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-
-    // Get ID from URL
     const params = useParams();
+
+    const columns = [
+        { field: "last_name", headerName: "NOM", minWidth: 300 },
+        { field: "first_name", headerName: "PRENOM", minWidth: 300 },
+        { field: "application_date", headerName: "DATE DE CANDIDATURE", minWidth: 170 },
+        {
+            field: "status",
+            headerName: "STATUT DE LA CANDIDATURE",
+            minWidth: 170,
+            renderCell: (params) => (
+                <Select
+                    value={params.row.status}
+                    onChange={(e) => handleStatusChange(e, params.row)}
+                    displayEmpty
+                >
+                    <MenuItem value="Processing">En attente</MenuItem>
+                    <MenuItem value="Received">Accepté</MenuItem>
+                    <MenuItem value="Rejected">Rejeté</MenuItem>
+                </Select>
+            ),
+        },
+        { field: "feedback", headerName: "COMMENTAIRE", minWidth: 170 },
+        { field: "ats_final_note", headerName: "NOTATION", minWidth: 170 },
+    ];
 
     useEffect(() => {
         const request = async () => {
@@ -35,17 +50,15 @@ export default function Application_offer() {
                     "exact": true
                 });
 
-                const applications = applicationResponse.items;
+                const applications = applicationResponse.data.items;
 
-                // Pour chaque candidature, récupérer les infos du candidat
                 const applicationsWithCandidateInfo = await Promise.all(
                     applications.map(async (application) => {
-                        // Récupérer les informations du candidat à partir de l'ID candidat
                         const candidateResponse = await Fetch(`/api/candidate/${application.id_candidate}`);
                         return {
                             ...application,
-                            last_name: candidateResponse.last_name,
-                            first_name: candidateResponse.first_name,
+                            last_name: candidateResponse.data.last_name,
+                            first_name: candidateResponse.data.first_name,
                         };
                     })
                 );
@@ -61,12 +74,27 @@ export default function Application_offer() {
         request();
     }, []);
 
-    //Fonction pour gérer le clic sur une ligne
     const handleRowClick = (params) => {
         const candidateId = params.row.id_candidate;
-        const applicationid = params.row.id;
-        navigate(`/about_candidate/${applicationid}/${candidateId}`);
-      };
+        const applicationId = params.row.id;
+        navigate(`/about_candidate/${applicationId}/${candidateId}`);
+    };
+
+    const handleStatusChange = async (event, row) => {
+        const newStatus = event.target.value;
+        row.status = newStatus
+        try {
+            await Put(`/api/application/${row.id}`, row);
+
+            setData((prevData) =>
+                prevData.map((application) =>
+                    application.id === row.id ? { ...application, status: newStatus } : application
+                )
+            );
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
+    };
 
     if (loading) {
         return <div>Loading...</div>;

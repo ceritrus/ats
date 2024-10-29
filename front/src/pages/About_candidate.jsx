@@ -20,7 +20,8 @@ export default function About_candidate() {
   const fetchCandidateData = async () => {
     try {
       const candidateData = await Fetch(`/api/candidate/${candidate_id}`);
-      setCandidate(candidateData);
+      console.log(candidateData.data);
+      setCandidate(candidateData.data);
     } catch (error) {
       console.error("Erreur lors de la récupération du candidat :", error);
     }
@@ -30,7 +31,8 @@ export default function About_candidate() {
   const fetchApplicationData = async () => {
     try {
       const applicationData = await Fetch(`/api/application/${application_id}`);
-      setApplication(applicationData);
+      console.log(applicationData.data);
+      setApplication(applicationData.data);
     } catch (error) {
       console.error("Erreur lors de la récupération de la candidature :", error);
     }
