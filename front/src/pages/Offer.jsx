@@ -12,6 +12,7 @@ export default function Offer() {
     const request = async () => {
       try {
         const response = await Fetch("/api/job-offer/" + String(id));
+        console.log("Offer: ", response.data);
         setOffer(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -34,11 +35,14 @@ export default function Offer() {
             Postuler
           </button>
         </div>
-        <section className="description">
-          {offer.company_description} - 31000, Toulouse
-        </section>
-        <span>{offer.job_location}</span>
-        <span> {parseFloat(offer.salary)}€</span>
+        <section className="description">{offer.company_description}</section>
+        <span>Lieux: {offer.job_location}</span>
+        <span>Salaire: {parseFloat(offer.salary)}€</span>
+        <span>
+          Expérience requise: {offer.experience}{" "}
+          {offer.experience <= 1 ? "an" : "ans"}
+        </span>
+        <span>Diplôme requis: {offer.graduate}</span>
         <br />
         <br />
         <section className="description">{offer.description}</section>

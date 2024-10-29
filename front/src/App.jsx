@@ -13,8 +13,29 @@ import About_candidate from "./pages/About_candidate";
 import Apply from "./pages/Apply";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setID, setName, setEmail, setRole } from "./utils/UserSlice";
 
 function App() {
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!user.id) {
+      if (localStorage.getItem("token")) {
+        const token = localStorage.getItem("token");
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        dispatch(setID(payload.id));
+        dispatch(setRole(payload.role));
+        dispatch(setName(payload.sub));
+      }
+    } else {
+      console.log("User found: ", user);
+    }
+  }, [user]);
+
   return (
     <div className="App">
       <Navbar />

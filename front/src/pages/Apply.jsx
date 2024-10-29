@@ -59,6 +59,7 @@ export default function Apply() {
           status: "Processing",
         })
           .then((innerResponse) => {
+            console.log("Application updated:", innerResponse.data);
             navigate("/offers/" + id);
           })
           .catch((error) => {
