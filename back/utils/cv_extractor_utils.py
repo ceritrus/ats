@@ -4,6 +4,9 @@ import re
 from typing import List, Dict
 from dateutil import parser
 from datetime import datetime
+from back.core.config import settings
+from back.db.models.JobOffer import JobOffer
+
 
 class CVExtractorUtils:
     def __init__(self):
@@ -19,14 +22,14 @@ class CVExtractorUtils:
                 extracted_text += page_text + "\n"  
         return extracted_text.lower() 
     
-    def extract_cv_data(self, extracted_text: str, jobs) -> Dict:
+    def extract_cv_data(self, extracted_text: str, job_offer:JobOffer) -> Dict:
         doc = self.nlp(extracted_text)
-        skills = self.extract_skills(doc, jobs.get("skills"))
-        soft_skills = self.extract_soft_skills(doc, jobs.get("soft_skills"))
+        skills = self.extract_skills(doc, [skill.label for skill in job_offer.skills])
+        soft_skills = self.extract_soft_skills(doc, [soft_skill.label for soft_skill in job_offer.soft_skills])
         experience_years = self.extract_experience(extracted_text)
         job_title = self.extract_job_title(doc)
         graduate = self.extract_graduate(extracted_text)
-        location = self.extract_location(doc, jobs.get("job_location")) 
+        location = self.extract_location(doc, job_offer.job_location) 
 
         return {
             "skills": skills,
@@ -34,7 +37,8 @@ class CVExtractorUtils:
             "experience_years": experience_years,
             "job_title": job_title,
             "graduate": graduate,
-            "location": location
+            "location": location,
+            "token_number":len(doc)
         }
 
     def extract_skills(self, doc, required_skills: List[str]) -> List[str]:
@@ -135,8 +139,8 @@ class CVExtractorUtils:
             return 0.0
         return intersection / union
     
-    def calculate_score(self, job_offer: Dict, cv_file_path: str) -> float:
-        extracted_text = self.read_pdf(cv_file_path)
+    def calculate_score(self, job_offer: JobOffer, cv_file_path: str) -> float:
+        extracted_text = self.read_pdf(settings.UPLOAD_DIR+"/"+cv_file_path)
         cv_data = self.extract_cv_data(extracted_text, job_offer)
         print(cv_data)
 
@@ -145,7 +149,7 @@ class CVExtractorUtils:
 
 
         cv_text = extracted_text
-        job_description = job_offer.get("job_description", "").lower()
+        job_description = job_offer.description.lower()
 
 
         cv_words = cv_text.split()
@@ -162,7 +166,7 @@ class CVExtractorUtils:
         jaccard_sim = self.jaccard_similarity(set(cv_words), set(job_description_words))
 
 
-        required_skills = job_offer.get("skills")
+        required_skills = [skill.label for skill in job_offer.skills]
         cv_skills = self.extract_skills(self.nlp(extracted_text), required_skills)
         matching_skills = len(set(required_skills).intersection(cv_skills))
         if required_skills:
@@ -170,7 +174,7 @@ class CVExtractorUtils:
             score += skills_score * 1.5
 
 
-        required_soft_skills = job_offer.get("soft_skills")
+        required_soft_skills = [soft_skill.label for soft_skill in job_offer.soft_skills]
         cv_soft_skills = self.extract_soft_skills(self.nlp(extracted_text), required_soft_skills)
         matching_soft_skills = len(set(required_soft_skills).intersection(cv_soft_skills))
         if required_soft_skills:
@@ -181,23 +185,23 @@ class CVExtractorUtils:
             score += soft_skills_score * 1.0
 
 
-        required_experience = job_offer.get("experience", 0)
+        required_experience = job_offer.experience
         cv_experience = cv_data.get("experience_years", 0)
         experience_score = min(cv_experience / required_experience, 1) if required_experience > 0 else 0
         score += experience_score * 1.0
 
-        job_title = job_offer.get("job_title", "").lower()
+        job_title = job_offer.title.lower()
         cv_job_title = cv_data.get("job_title", "").lower()
         if job_title in cv_job_title or cv_job_title in job_title:
             score += 0.5
 
 
-        job_graduate = job_offer.get("graduate", "").lower()
+        job_graduate = job_offer.graduate.value.lower()
         cv_graduate = cv_data.get("graduate", "").lower()
         if job_graduate == cv_graduate:
             score += 0.5
 
-        job_location = job_offer.get("job_location", "").lower()
+        job_location = job_offer.job_location.lower()
         cv_location = cv_data.get("location", "").lower()
         if job_location == cv_location:
             score += 0.5
@@ -209,6 +213,8 @@ class CVExtractorUtils:
         return {
             "final_score": round(final_score, 2),
             "cv_data": cv_data,
+            "cv_token_number":cv_data.get("token_number"),
+            "job_desc_token_number":len(self.nlp(job_offer.description)),
             "cosine_similarity": round(cosine_sim, 2),
             "jaccard_similarity": round(jaccard_sim, 2)
         }

@@ -6,6 +6,8 @@ from sqlalchemy import Enum as SQLAlchemyEnum
 from sqlmodel import Field, SQLModel
 from typing import List, Optional
 from back.db.models.JobOffer import Graduate
+from back.db.models.Skill import Skill
+from back.db.models.SoftSkill import SoftSkill
 
 class JobOfferCreate(SQLModel):
     job_ref: str = Field(..., max_length=12, description="Unique reference for the job offer")
@@ -50,8 +52,8 @@ class JobOfferRead(SQLModel):
     posted_date: datetime.date = Field(..., description="Date the job was posted")
     end_of_application: datetime.date = Field(..., description="Deadline for applications")
     id_recruiter: int = Field(..., description="ID of the recruiter posting the job offer")
-    skill_ids: Optional[List[int]] = Field(default=None, description="List of skill IDs required for the job")
-    soft_skill_ids: Optional[List[int]] = Field(default=None, description="List of soft skill IDs required for the job")
+    skills: Optional[List["Skill"]] = Field(default=None, description="List of skills required for the job")
+    soft_skills: Optional[List["SoftSkill"]] = Field(default=None, description="List of soft skills required for the job")
 
     class Config:
         orm_mode = True
