@@ -13,6 +13,7 @@ import About_candidate from "./pages/About_candidate";
 import Apply from "./pages/Apply";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
+import CandidateOffers from "./pages/Candidate_offers";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -31,8 +32,6 @@ function App() {
         dispatch(setRole(payload.role));
         dispatch(setName(payload.sub));
       }
-    } else {
-      console.log("User found: ", user);
     }
   }, [user]);
 
@@ -52,6 +51,7 @@ function App() {
         <Route path="/offers/:id" element={<Offer />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit" element={<ProfileEdit />} />
+        <Route path="/applications" element={<CandidateOffers />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
