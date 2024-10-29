@@ -4,6 +4,7 @@ from typing import  List, Dict
 import os
 
 class Settings(BaseSettings):
+    OPENAI_KEY: str
     PROJECT_NAME : str = "ATS With AI"
     ALLOWED_HOSTS: list = ['*']
     DATABASE_URL: str = "sqlite:///./ats.db"
@@ -76,6 +77,6 @@ class Settings(BaseSettings):
         "search": [],             
     }      
     class Config:
-        env_file = ".env"
+        env_file = "back/core/.env"
 
 settings = Settings()

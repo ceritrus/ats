@@ -8,6 +8,7 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     description="A brief description of your project.",
     version="1.0.0",
+    swagger_ui_parameters={"docExpansion": "none"},
 )
 
 app.add_middleware(
