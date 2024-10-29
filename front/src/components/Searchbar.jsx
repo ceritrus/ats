@@ -15,8 +15,10 @@ export default function Searchbar({ searchCallback }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (searchValue !== "") {
-      searchCallback(searchValue);
-      navigate("/");
+      navigate("/offers");
+      setTimeout(() => {
+        navigate("/search/" + searchValue);
+      }, 50);
     }
   };
 
@@ -27,7 +29,7 @@ export default function Searchbar({ searchCallback }) {
         value={searchValue}
         onChange={handleChange}
         onSubmit={handleSubmit}
-        placeholder="Rechercher une offre, une entreprise..."
+        placeholder="Rechercher une offre..."
       />
       <button type="submit">
         <SearchIcon />
