@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Fetch } from "../utils/Api";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
-import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { setID, setName, setEmail, setRole } from "../utils/UserSlice";
 
