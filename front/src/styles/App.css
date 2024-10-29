@@ -65,7 +65,7 @@
   padding: 1em 1.5em;
 }
 
-.nav-profile {
+.nav-profile-container {
   border-radius: 0.5em;
   background-color: #000000;
   color: #ffffff;
@@ -81,7 +81,7 @@
   transition-duration: 0.2s;
 }
 
-.nav-profile:hover {
+.nav-profile-container:hover {
   color: #000000;
   background-color: #ffffff;
   transition-duration: 0.2s;
