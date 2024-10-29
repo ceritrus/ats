@@ -10,7 +10,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const userRole = user?.role
+  const userRole = user?.role;
 
   // Fonction pour basculer l'affichage du sous-menu
   const toggleMenu = () => {
@@ -37,18 +37,26 @@ export default function Navbar() {
         <Icons.user className="icon" fontSize="large" />
         {isMenuOpen && (
           <div className="submenu">
-          {userRole === "Recruiter" ? (
-            <>
-              <Link to="/profile" className="submenu-link">Mon Profil</Link>
-              <Link to="/recruiter_offer" className="submenu-link">Mes offres</Link>
-            </>
-          ) : (
-            <>
-              <Link to="/profile" className="submenu-link">Mon Profil</Link>
-              <Link to="/settings" className="submenu-link">Mes candidatures</Link>
-            </>
-          )}
-        </div>
+            {userRole === "Recruiter" ? (
+              <>
+                <Link to="/profile" className="submenu-link">
+                  Mon Profil
+                </Link>
+                <Link to="/recruiter_offer" className="submenu-link">
+                  Mes Offres
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/profile" className="submenu-link">
+                  Mon Profil
+                </Link>
+                <Link to="/applications" className="submenu-link">
+                  Mes Candidatures
+                </Link>
+              </>
+            )}
+          </div>
         )}
       </div>
     </div>

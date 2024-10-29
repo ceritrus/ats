@@ -59,7 +59,6 @@ export default function Apply() {
           status: "Processing",
         })
           .then((innerResponse) => {
-            console.log("Application updated:", innerResponse.data);
             navigate("/offers/" + id);
           })
           .catch((error) => {
@@ -77,9 +76,9 @@ export default function Apply() {
               id_job_offer: id,
               id_candidate: user.id,
               cv_link: response.data.cv_name,
+              applicant_message: message,
             })
               .then((innerResponse) => {
-                console.log(innerResponse.data);
                 setShowError(false);
                 setShowNote(true);
                 setNeedsValidation(true);
@@ -115,8 +114,6 @@ export default function Apply() {
   };
 
   const handleChange = (event) => {
-    console.log("Change detected");
-    console.log(event.target.value);
     setShowError(false);
     setShowNote(false);
     setNeedsValidation(false);
@@ -145,7 +142,7 @@ export default function Apply() {
           className="mb-3 applyGroup"
           controlId="exampleForm.ControlTextarea1"
           onChange={(e) => {
-            handleChange(e);
+            setMessage(e.target.value);
           }}
         >
           <Form.Label>Message optionel pour le recruteur:</Form.Label>
