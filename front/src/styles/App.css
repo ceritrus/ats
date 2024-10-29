@@ -65,7 +65,7 @@
   padding: 1em 1.5em;
 }
 
-.nav-profile {
+.nav-profile-container {
   border-radius: 0.5em;
   background-color: #000000;
   color: #ffffff;
@@ -81,7 +81,7 @@
   transition-duration: 0.2s;
 }
 
-.nav-profile:hover {
+.nav-profile-container:hover {
   color: #000000;
   background-color: #ffffff;
   transition-duration: 0.2s;
@@ -145,6 +145,7 @@
     padding: 0.5rem;
     padding-left: 1rem;
     background-color: #edf2f4;
+    color: black;
   }
 }
 
@@ -286,6 +287,7 @@
 
 .description {
   font-size: 1.5em;
+  margin-bottom: .5em;
 }
 
 .offer div button {
@@ -306,6 +308,7 @@
   background-color: #7ed6df;
   border-radius: .5em;
   padding: .2em .3em;
+  margin-top: 1em;
   margin-right: .5em;
 }
 
@@ -407,6 +410,11 @@
   justify-content: space-between;
   gap: 1em;
   align-items: center;
+  margin: 0em;
+  padding: 0em;
+  margin-top: 1em;
+  background: none;
+  box-shadow: none;
 }
 
 .login-footer a {
@@ -433,7 +441,7 @@
   border-radius: 4px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  width: 200px;
+  width: 250px;
 }
 
 .submenu-link {
@@ -445,4 +453,89 @@
 
 .submenu-link:hover {
   background-color: #f0f0f0;
+}
+
+.apply {
+  background: linear-gradient(45deg, #22a6b3, #7ed6df);
+  padding: 3em;
+  margin: 4em;
+
+  border-radius: .25em;
+  box-shadow: 0 0 1em 0.2em #00000027;
+  padding: 1em 2em;
+}
+
+.apply h1 {
+  margin: 0em;
+  font-size: 3em;
+  text-shadow: 1px 1px 3px black;
+  color: white;
+}
+
+.apply .mb-3 {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-bottom: 0em;
+}
+
+.apply input {
+  padding: 1em;
+  border-radius: .5em;
+  border: none;
+  background-color: white;
+  transition-duration: .5s;
+  color: black;
+}
+
+.apply button {
+  margin-top: 1em;
+  margin-bottom: 0em;
+  padding: 1em;
+  border-radius: .5em;
+  border: none;
+  background-color: black;
+  color: white;
+  transition-duration: .5s;
+}
+
+.apply button:hover {
+  background-color: white;
+  color: black;
+  transition-duration: .5s;
+}
+
+.apply form label {
+  font-size: 1.2em;
+  text-align: left;
+  margin: 1em 0em 0em 0em;
+}
+
+.apply .form-group {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
+.apply .error {
+  color: red;
+  font-size: 1.2em;
+  text-align: left;
+  margin: 0em;
+}
+
+.apply .error::before {
+  content: "⚠️ ";
+}
+
+.note {
+  background: linear-gradient(45deg, #22a6b3, #7ed6df);
+  margin-top: 2em;
+
+  border-radius: .25em;
+  box-shadow: 0 0 1em 0.2em #00000027;
+  padding: 1em 2em;
+
+  color: white;
+  text-shadow: 1px 1px 1px rgb(0, 0, 0);
 }
