@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Type, TypeVar, Generic, List, Optional
 from sqlmodel import SQLModel, Session, select
 from back.utils.lefenshtein_utils import levenshtein
@@ -138,6 +139,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, UpdateSchema
                         if obj_value is None:
                             is_match = False
                             continue
+
+                        if isinstance(obj_value, Enum):
+                            obj_value = obj_value.value
 
                         if isinstance(value, list):
                             if exact:
