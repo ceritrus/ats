@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const columns = [
   { field: "company_description", headerName: "ENTREPRISE", minWidth: 170 },
-  { field: "title", headerName: "TITRE", minWidth: 170 },
+  { field: "title", headerName: "TITRE", minWidth: 200 },
   { field: "description", headerName: "DESCRIPTION", minWidth: 300 },
   { field: "job_location", headerName: "LIEU", minWidth: 170 },
   { field: "posted_date", headerName: "PUBLIÉ LE", minWidth: 170 },
