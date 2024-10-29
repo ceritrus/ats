@@ -142,7 +142,6 @@ class CVExtractorUtils:
     def calculate_score(self, job_offer: JobOffer, cv_file_path: str) -> float:
         extracted_text = self.read_pdf(settings.UPLOAD_DIR+"/"+cv_file_path)
         cv_data = self.extract_cv_data(extracted_text, job_offer)
-        print(cv_data)
 
         score = 0
         max_score = 5
