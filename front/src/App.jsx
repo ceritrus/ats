@@ -14,6 +14,7 @@ import Apply from "./pages/Apply";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import CandidateOffers from "./pages/Candidate_offers";
+import Search from "./pages/Search";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -44,6 +45,7 @@ function App() {
         <Route path="/recruiter_offer" element={<Recruiter_offer />} />
         <Route path="/application_offer/:id" element={<Application_offer />} />
         <Route path="/apply/:id" element={<Apply />} />
+        <Route path="/search/:needle" element={<Search />} />
         <Route
           path="/about_candidate/:application_id/:candidate_id"
           element={<About_candidate />}
