@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Post, Put } from "../utils/Api";
+import { Post, Put, Delete } from "../utils/Api";
 import { DataGrid } from "@mui/x-data-grid";
 import { Select, MenuItem, Paper} from '@mui/material';
 import { useNavigate } from "react-router-dom";
@@ -144,6 +144,19 @@ export default function Recruiter_offer() {
         }
     };
 
+    const handleDeleteClick = async (job) =>{
+        try {
+            var dialog = confirm('Voulez vous supprimer cette offre ?');
+            if (dialog) {
+                console.log("delete :" + job.id);
+                await Delete(`/api/job-offer/${job.id}`);
+                window.location.reload();
+            } 
+        } catch (error) {
+            console.error("Erreur :", error);
+        }
+    }
+
     const columns = [
         { field: "job_ref", headerName: "REF.", width: 150},
         { field: "title", headerName: "TITRE", width: 250},
@@ -168,6 +181,23 @@ export default function Recruiter_offer() {
                     }}
                 >
                     Modifier
+                </Button>
+            ),
+        },
+        {
+            field: "delete",
+            headerName: "SUPPRIMER",
+            width: 80,
+            renderCell: (params) => (
+                <Button
+                    variant="contained"
+                    color="red"
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        handleDeleteClick(params.row);
+                    }}
+                >
+                    X
                 </Button>
             ),
         },

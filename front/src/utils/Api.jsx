@@ -22,6 +22,7 @@ export async function Post(url, data) {
     console.error("Error posting data:", error);
   }
 }
+
 export async function Put(url, data) {
   try {
     if (localStorage.getItem("token")) {
@@ -38,5 +39,15 @@ export async function Put(url, data) {
     }
   } catch (error) {
     console.error("Error putting data:", error);
+  }
+}
+
+export async function Delete(url) {
+  try {
+    const response = await axios.delete(`${back}${url}`);
+    const result = await response;
+    return result;
+  } catch (error) {
+    console.error("Error delete data:", error);
   }
 }
