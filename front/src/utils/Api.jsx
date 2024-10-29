@@ -15,9 +15,18 @@ export async function Fetch(url) {
 
 export async function Post(url, data) {
   try {
-    const response = await axios.post(`${back}${url}`, data);
-    const result = response;
-    return result;
+    if (localStorage.getItem("token")) {
+      const response = await axios.post(`${back}${url}`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          ContentType: "application/json",
+        },
+      });
+      return response;
+    } else {
+      const response = await axios.post(`${back}${url}`, data);
+      return response;
+    }
   } catch (error) {
     console.error("Error posting data:", error);
   }
