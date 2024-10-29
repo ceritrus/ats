@@ -1,8 +1,12 @@
 from back.db.models.JobOffer import JobOffer
+from back.db.models.NeedToHaveSkill import NeedToHaveSkill
+from back.db.models.NeedToHaveSoftSkill import NeedToHaveSoftSkill
 from back.schemas.job_offer_schem import JobOfferRead, JobOfferCreate, JobOfferUpdate
 from sqlmodel import Session, select
 from back.services.crud_base import CRUDBase
-from back.db.models import Skill, SoftSkill
+from back.db.models.Skill import Skill
+from back.db.models.SoftSkill import SoftSkill
+
 from typing import Optional
 
 class CRUDJobOffer(CRUDBase[JobOffer, JobOfferCreate, JobOfferRead, JobOfferUpdate]):
@@ -11,11 +15,15 @@ class CRUDJobOffer(CRUDBase[JobOffer, JobOfferCreate, JobOfferRead, JobOfferUpda
 
         if obj_in.skill_ids:
             skills = session.exec(select(Skill).where(Skill.id.in_(obj_in.skill_ids))).all()
-            db_obj.skills.extend(skills)
+            for skill in skills:
+                need_to_have_skill = NeedToHaveSkill(id_job_offer=db_obj.id, id_skill=skill.id)
+                db_obj.need_to_have_skills.append(need_to_have_skill)
 
         if obj_in.soft_skill_ids:
             soft_skills = session.exec(select(SoftSkill).where(SoftSkill.id.in_(obj_in.soft_skill_ids))).all()
-            db_obj.soft_skills.extend(soft_skills)
+            for soft_skill in soft_skills:
+                need_to_have_soft_skill = NeedToHaveSoftSkill(id_job_offer=db_obj.id, id_soft_skill=soft_skill.id)
+                db_obj.need_to_have_soft_skills.append(need_to_have_soft_skill)
 
         session.add(db_obj)
         session.commit()

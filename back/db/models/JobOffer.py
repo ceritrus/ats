@@ -34,5 +34,12 @@ class JobOffer(SQLModel, table=True):
     id_recruiter: int = Field(foreign_key="recruiter.id")
     recruiter: Optional["Recruiter"] = Relationship(back_populates="job_offers")
     applications: List["Application"] = Relationship(back_populates="job_offer")
-    need_to_have_skills: List["NeedToHaveSkill"] = Relationship(back_populates="job_offer")
-    need_to_have_soft_skills: List["NeedToHaveSoftSkill"] = Relationship(back_populates="job_offer")
+    need_to_have_skills: List["NeedToHaveSkill"] = Relationship(back_populates="job_offer", cascade_delete=True)
+    need_to_have_soft_skills: List["NeedToHaveSoftSkill"] = Relationship(back_populates="job_offer", cascade_delete=True)
+    @property
+    def skills(self) -> List["Skill"]:
+        return [need_skill.skill for need_skill in self.need_to_have_skills]
+
+    @property
+    def soft_skills(self) -> List["SoftSkill"]:
+        return [need_soft_skill.soft_skill for need_soft_skill in self.need_to_have_soft_skills]
