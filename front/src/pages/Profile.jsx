@@ -34,7 +34,7 @@ export default function Profile() {
     <Container className="profile">
       <Row className="header">
         <Col>
-          <h1>Profile</h1>
+          <h1>Profil</h1>
         </Col>
         <Link to={"/profile/edit"} className="btn btn-primary">
           [ ✏️ MODIFIER ]

@@ -64,7 +64,9 @@ export default function Login() {
                     type="username"
                     placeholder="Entrez votre nom d'utilisateur"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                    }}
                   />
                 </Form.Group>
 
@@ -74,7 +76,9 @@ export default function Login() {
                     type="password"
                     placeholder="Entrez votre mot de passe"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
                   />
                 </Form.Group>
                 {showError && error}
