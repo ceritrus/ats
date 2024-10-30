@@ -28,7 +28,7 @@ export default function CandidateOffers() {
     } else {
       Post("/api/application/search_paginated", {
         query: {
-          id_candidate: user.id,
+          id_candidate: user.role_id,
         },
         fields: ["id_candidate"],
         limit: 50,
