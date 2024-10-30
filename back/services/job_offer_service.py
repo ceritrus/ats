@@ -33,6 +33,7 @@ class CRUDJobOffer(CRUDBase[JobOffer, JobOfferCreate, JobOfferRead, JobOfferUpda
     def update(self, obj_id: int, obj_in: JobOfferCreate, session: Session) -> Optional[JobOfferRead]:
         statement = select(JobOffer).where(JobOffer.id == obj_id)
         db_obj = session.exec(statement).first()
+        
         if not db_obj:
             return None
 
@@ -41,14 +42,15 @@ class CRUDJobOffer(CRUDBase[JobOffer, JobOfferCreate, JobOfferRead, JobOfferUpda
 
         if obj_in.skill_ids is not None:
             skills = session.exec(select(Skill).where(Skill.id.in_(obj_in.skill_ids))).all()
-            db_obj.skills = skills  
+            db_obj.need_to_have_skills.extend([NeedToHaveSkill(skill=skill) for skill in skills])
 
         if obj_in.soft_skill_ids is not None:
             soft_skills = session.exec(select(SoftSkill).where(SoftSkill.id.in_(obj_in.soft_skill_ids))).all()
-            db_obj.soft_skills = soft_skills 
+            db_obj.need_to_have_soft_skills.extend([NeedToHaveSoftSkill(soft_skill=soft_skill) for soft_skill in soft_skills])
 
         session.commit()
         session.refresh(db_obj)
+        
         return self.read_schema.from_orm(db_obj)
 
 crud_job_offer = CRUDJobOffer(JobOffer, JobOfferRead, JobOfferUpdate)

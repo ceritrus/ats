@@ -43,3 +43,13 @@ class JobOffer(SQLModel, table=True):
     @property
     def soft_skills(self) -> List["SoftSkill"]:
         return [need_soft_skill.soft_skill for need_soft_skill in self.need_to_have_soft_skills]
+    
+    @soft_skills.setter
+    def soft_skills(self, new_soft_skills: List["SoftSkill"]):
+        self.need_to_have_soft_skills.clear()
+        self.need_to_have_soft_skills.extend(new_soft_skills)
+
+    @soft_skills.setter
+    def skills(self, new_skills: List["Skill"]):
+        self.need_to_have_skills.clear()
+        self.need_to_have_skills.extend(new_skills)
