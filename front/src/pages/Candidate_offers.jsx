@@ -34,6 +34,8 @@ export default function CandidateOffers() {
         limit: 50,
         offset: 0,
         exact: true,
+        sort_by: "ats_final_note",
+        order: "asc"
       }).then((response) => {
         for (let i = 0; i < response.data.items.length; i++) {
           Fetch("/api/job-offer/" + response.data.items[i].id_job_offer)
