@@ -18,7 +18,13 @@ import Search from "./pages/Search";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setID, setName, setEmail, setRole } from "./utils/UserSlice";
+import {
+  setID,
+  setName,
+  setEmail,
+  setRole,
+  setRoleID,
+} from "./utils/UserSlice";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -32,6 +38,7 @@ function App() {
         dispatch(setID(payload.id));
         dispatch(setRole(payload.role));
         dispatch(setName(payload.sub));
+        dispatch(setRoleID(payload.role_id));
       }
     }
   }, [user]);

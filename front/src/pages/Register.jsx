@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { setID, setName, setEmail, setRole } from "../utils/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { Switch } from "@mui/material";
 
 export default function Register() {
   const [currentUser, setUser] = useState(null);
@@ -18,6 +19,10 @@ export default function Register() {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [role, setRole] = useState("Candidat");
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -31,6 +36,15 @@ export default function Register() {
     } else if (email.length === 0) {
       setShowError(true);
       setError(<p className="error">L'email est obligatoire</p>);
+    } else if (firstName.length === 0) {
+      setShowError(true);
+      setError(<p className="error">Le prénom est obligatoire</p>);
+    } else if (lastName.length === 0) {
+      setShowError(true);
+      setError(<p className="error">Le nom est obligatoire</p>);
+    } else if (phone.length === 0) {
+      setShowError(true);
+      setError(<p className="error">Le téléphone est obligatoire</p>);
     } else {
       setShowError(false);
       Post("/api/user/create", {
@@ -39,6 +53,35 @@ export default function Register() {
         email: email,
       })
         .then((response) => {
+          console.log("User created:", response.data);
+          if (role === "Candidat") {
+            Post("/api/candidate/create", {
+              id_user: response.data.id,
+              first_name: firstName,
+              last_name: lastName,
+              phone_number: phone,
+              cv_link: "undefined",
+            })
+              .then((response) => {
+                console.log(role + "created:", response.data);
+              })
+              .catch((error) => {
+                console.error("Error creating candidate:", error);
+              });
+          } else {
+            Post("/api/recruiter/create", {
+              id_user: response.data.id,
+              first_name: firstName,
+              last_name: lastName,
+              phone_number: phone,
+            })
+              .then((response) => {
+                console.log(role + "created:", response.data);
+              })
+              .catch((error) => {
+                console.error("Error creating recruiter:", error);
+              });
+          }
           navigate("/login");
         })
         .catch((error) => {
@@ -59,6 +102,26 @@ export default function Register() {
         </Col>
       </Row>
       <Row>
+        <Form.Group className="mb-3 role-toggle" controlId="formBasicRole">
+          <span>
+            <Form.Label
+              className={role === "Candidat" ? "active-role" : "inactive-role"}
+            >
+              Candidat
+            </Form.Label>
+            <Switch
+              onChange={(e) => {
+                setRole(e.target.checked ? "Recruteur" : "Candidat");
+              }}
+              size="large"
+            />
+            <Form.Label
+              className={role === "Recruteur" ? "active-role" : "inactive-role"}
+            >
+              Recruteur
+            </Form.Label>
+          </span>
+        </Form.Group>
         <Col>
           <Card>
             <Card.Body>
@@ -80,6 +143,36 @@ export default function Register() {
                     placeholder="Entrez votre adresse mail"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="formBasicFirstName">
+                  <Form.Label>Prénom:</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Entrez votre prénom"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="formBasicLastName">
+                  <Form.Label>Nom:</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Entrez votre nom"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="formBasicPhone">
+                  <Form.Label>Téléphone:</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Entrez votre numéro de téléphone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </Form.Group>
 
