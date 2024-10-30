@@ -4,7 +4,13 @@ import { Fetch, Post } from "../utils/Api";
 import { Button, Card, Col, Container, Row, Form } from "react-bootstrap";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
-import { setID, setName, setEmail, setRole } from "../utils/UserSlice";
+import {
+  setID,
+  setName,
+  setEmail,
+  setRole,
+  setRoleID,
+} from "../utils/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Login() {
@@ -32,9 +38,11 @@ export default function Login() {
         const payload = JSON.parse(
           atob(response.data.access_token.split(".")[1])
         );
+        console.log("Login successful:", payload);
         dispatch(setID(payload.id));
         dispatch(setRole(payload.role));
         dispatch(setName(payload.sub));
+        dispatch(setRoleID(payload.role_id));
         navigate("/profile");
       })
       .catch((error) => {

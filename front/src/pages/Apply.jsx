@@ -73,7 +73,7 @@ export default function Apply() {
           .then((response) => {
             Post("/api/application/create", {
               id_job_offer: id,
-              id_candidate: user.id,
+              id_candidate: user.role_id,
               cv_link: response.data.cv_name,
               applicant_message: message,
             })
