@@ -9,7 +9,6 @@ import { useParams } from "react-router-dom";
 export default function About_candidate() {
   const [candidate, setCandidate] = useState(null);
   const [application, setApplication] = useState(null);
-  const pdfUrl = 'http://127.0.0.1:8000/api/download/'; // Racine du path pour les CV
 
   // Get ID from URL
   const params = useParams();
@@ -20,7 +19,7 @@ export default function About_candidate() {
   const fetchCandidateData = async () => {
     try {
       const candidateData = await Fetch(`/api/candidate/${candidate_id}`);
-      setCandidate(candidateData);
+      setCandidate(candidateData.data);
     } catch (error) {
       console.error("Erreur lors de la récupération du candidat :", error);
     }
@@ -29,8 +28,9 @@ export default function About_candidate() {
   // Fonction pour récupérer les données de la candidature
   const fetchApplicationData = async () => {
     try {
-      const applicationData = await Fetch(`/api/application/${application_id}`);
-      setApplication(applicationData);
+      Fetch(`/api/application/${application_id}`).then((applicationData) => { 
+        setApplication(applicationData.data);
+      });
     } catch (error) {
       console.error("Erreur lors de la récupération de la candidature :", error);
     }
@@ -51,14 +51,15 @@ export default function About_candidate() {
         <div style={{ display: 'flex' }}>
           <div style={{ width: '40%' }}>
             <h1>A propos de {candidate.first_name} {candidate.last_name}</h1>
-            <p>Date de candidature : {application.application_date}</p>
-            <p>Score de pertinence : {application.ats_final_note}</p>
-            <p>Message de motivation : {application.message}</p>
-            <p>Feedback sur la candidature : {application.feedback}</p>
+            <p>Date de candidature : <strong>{application.application_date}</strong></p>
+            <p>Score de pertinence auto-calculé : <strong>{application.ats_prenotation}/5</strong></p>
+            <p>Score de pertinence calculé par l'IA : <strong>{application.ats_final_note}/5</strong></p>
+            <p>Message de motivation : <strong>{application.applicant_message}</strong></p>
+            <p>Feedback sur la candidature : <strong>{application.feedback}</strong></p>
           </div>
           <div style={{ width: '60%', height: '70vh' }}>
-            <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
-              <Viewer fileUrl={pdfUrl + candidate.cv_link} />
+            <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}>
+              <Viewer httpHeaders={{Authorization: 'Bearer ' + localStorage.getItem("token")}} fileUrl={'http://127.0.0.1:8000/api/download/' + application.cv_link} />
             </Worker>
           </div>
         </div>
