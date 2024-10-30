@@ -55,7 +55,6 @@ export default function About_candidate() {
             <p>Score de pertinence auto-calculé : <strong>{application.ats_prenotation}/5</strong></p>
             <p>Score de pertinence calculé par l'IA : <strong>{application.ats_final_note}/5</strong></p>
             <p>Message de motivation : <strong>{application.applicant_message}</strong></p>
-            <p>Feedback sur la candidature : <strong>{application.feedback}</strong></p>
           </div>
           <div style={{ width: '60%', height: '70vh' }}>
             <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}>

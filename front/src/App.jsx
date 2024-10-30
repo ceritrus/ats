@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import CandidateOffers from "./pages/Candidate_offers";
 import Search from "./pages/Search";
+import Skills from "./pages/Skills";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -46,16 +47,14 @@ function App() {
         <Route path="/application_offer/:id" element={<Application_offer />} />
         <Route path="/apply/:id" element={<Apply />} />
         <Route path="/search/:needle" element={<Search />} />
-        <Route
-          path="/about_candidate/:application_id/:candidate_id"
-          element={<About_candidate />}
-        />
+        <Route path="/about_candidate/:application_id/:candidate_id" element={<About_candidate />} />
         <Route path="/offers/:id" element={<Offer />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit" element={<ProfileEdit />} />
         <Route path="/applications" element={<CandidateOffers />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/skills" element={<Skills />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

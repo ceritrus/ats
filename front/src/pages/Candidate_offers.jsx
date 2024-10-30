@@ -7,15 +7,12 @@ import { useSelector } from "react-redux";
 
 const columns = [
   { field: "company_description", headerName: "ENTREPRISE", minWidth: 170 },
-  { field: "title", headerName: "TITRE", minWidth: 170 },
-  {
-    field: "application_date",
-    headerName: "DATE DE CANDIDATURE",
-    minWidth: 170,
-  },
+  { field: "title", headerName: "TITRE", minWidth: 300 },
+  { field: "application_date", headerName: "DATE DE CANDIDATURE", minWidth: 170},
   { field: "ats_final_note", headerName: "NOTE SYSTÈME", minWidth: 170 },
   { field: "ats_prenotation", headerName: "NOTE AGENT IA", minWidth: 170 },
   { field: "end_of_application", headerName: "FIN DE L'OFFRE", minWidth: 170 },
+  { field: "applicant_message", headerName: "MESSAGE", minWidth: 300 },
 ];
 const paginationModel = { page: 0, pageSize: 10 };
 
