@@ -10,6 +10,8 @@ const columns = [
   { field: "title", headerName: "TITRE", minWidth: 200 },
   { field: "description", headerName: "DESCRIPTION", minWidth: 300 },
   { field: "job_location", headerName: "LIEU", minWidth: 170 },
+  { field: "graduate", headerName: "DIPLÔME REQUIS", minWidth: 170 },
+  { field: "experience", headerName: "ANNÉE(S) D'EXPERIENCE(S)", minWidth: 170 },
   { field: "posted_date", headerName: "PUBLIÉ LE", minWidth: 170 },
   { field: "end_of_application", headerName: "DATE LIMITE", minWidth: 170 },
 ];
