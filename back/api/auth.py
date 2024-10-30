@@ -6,6 +6,7 @@ from sqlmodel import Session
 from starlette import status
 from back.db.models import User
 from back.services.user_service import crud_user
+from back.services.candidate_service import crud_candidate
 from back.services.recruiter_service import crud_recruiter
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
@@ -55,11 +56,13 @@ def authenticate_user(username: str, password: str, db_dependency):
 
 def create_access_token(username: str, user_id: int, expires_delta: timedelta, db_dependency):
     access: str
-    if crud_recruiter.check_if_recruiter(user_id, db_dependency):
+    id = crud_recruiter.return_role_id(user_id, db_dependency)
+    if id:
         access = "Recruiter"
     else:
+        id = crud_candidate.return_role_id(user_id, db_dependency)
         access = "Candidate"
-    encode = {'sub': username, 'id': user_id, 'role': access}
+    encode = {'sub': username, 'id': user_id, 'role': access, 'role_id':id}
     expires = datetime.utcnow() + expires_delta
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITH)
@@ -73,11 +76,11 @@ async def get_current_user_or_none(token: Optional[str] = Depends(oauth_bearer_o
         username = payload.get('sub')
         user_id = payload.get('id')
         user_role = payload.get('role')
-        
-        if username is None or user_id is None:
+        role_id = payload.get('role_id')
+        if username is None or user_id is None or role_id is None:
             return None
         
-        return {'username': username, 'id': user_id, 'role': user_role}
+        return {'username': username, 'id': user_id, 'role': user_role, 'role_id': role_id}
     except JWTError:
         return None
 
