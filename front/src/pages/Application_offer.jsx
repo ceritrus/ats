@@ -35,8 +35,9 @@ export default function Application_offer() {
                 </Select>
             ),
         },
+        { field: "ats_prenotation", headerName: "PRENOTATION", minWidth: 170 },
+        { field: "ats_final_note", headerName: "NOTATION DE L'IA", minWidth: 170 },
         { field: "feedback", headerName: "COMMENTAIRE", minWidth: 170 },
-        { field: "ats_final_note", headerName: "NOTATION", minWidth: 170 },
     ];
 
     useEffect(() => {

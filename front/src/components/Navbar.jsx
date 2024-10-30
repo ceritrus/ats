@@ -45,6 +45,9 @@ export default function Navbar() {
                 <Link to="/recruiter_offer" className="submenu-link">
                   Mes Offres
                 </Link>
+                <Link to="/skills" className="submenu-link">
+                  Listes Skills
+                </Link>
               </>
             ) : (
               <>

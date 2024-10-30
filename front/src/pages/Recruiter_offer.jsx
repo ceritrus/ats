@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Post, Put, Delete } from "../utils/Api";
+import { Post, Put, Delete, Fetch } from "../utils/Api";
 import { DataGrid } from "@mui/x-data-grid";
 import { Select, MenuItem, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Button, Modal, Box, TextField } from "@mui/material";
 import { useSelector } from "react-redux";
+import { Checkbox, ListItemText } from "@mui/material";
 
 export default function Recruiter_offer() {
   const [data, setData] = useState([]);
@@ -23,11 +24,13 @@ export default function Recruiter_offer() {
     end_of_application: "",
     id_recruiter: 0,
     skill_ids: [],
-    soft_skill_ids: [],
+    softskill_ids: [],
   });
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const [idRecruiter, setIdRecruiter] = useState(null);
+  const [skills, setSkills] = useState([]);
+  const [softskills, setSoftskills] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,15 +57,38 @@ export default function Recruiter_offer() {
           });
           setData(offerResponse.data.items);
         }
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
+
+    const fetchSkills = async () => {
+      try {
+        const response = await Fetch('/api/skill');
+        setSkills(response.data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des compétences :", error);
+      }
+    };
+
+    const fetchSoftskills = async () => {
+      try {
+        const response = await Fetch('/api/soft-skill');
+        setSoftskills(response.data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des compétences :", error);
+      }
+    };
+
+    fetchSkills();
+    fetchSoftskills();
     fetchData();
   }, []);
 
   const handleOpenModal = (job) => {
     if (job) {
+      console.log(job);
       setSelectedJob(job);
       setFormValues({
         job_ref: job.job_ref,
@@ -75,8 +101,8 @@ export default function Recruiter_offer() {
         company_description: job.company_description,
         posted_date: job.posted_date,
         end_of_application: job.end_of_application,
-        skill_ids: job.skill_ids,
-        soft_skill_ids: job.soft_skill_ids,
+        skill_ids: job.skills.map(skill => skill.id),
+      softskill_ids: job.soft_skills.map(softSkill => softSkill.id)
       });
     } else {
       setSelectedJob(null);
@@ -92,7 +118,7 @@ export default function Recruiter_offer() {
         posted_date: "",
         end_of_application: "",
         skill_ids: [],
-        soft_skill_ids: [],
+        softskill_ids: [],
       });
     }
     setOpenModal(true);
@@ -105,10 +131,26 @@ export default function Recruiter_offer() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+
+    if (name === "skill_ids") {
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        skill_ids: value,
+      }));
+    }
+    else if (name === "softskill_ids") {
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        softskill_ids: value,
+      }));
+    } else {
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
+    }
+
+    console.log(formValues);
   };
 
   const handleSaveClick = async () => {
@@ -126,12 +168,13 @@ export default function Recruiter_offer() {
         end_of_application: formValues.end_of_application,
         id_recruiter: idRecruiter,
         skill_ids: formValues.skill_ids,
-        soft_skill_ids: formValues.soft_skill_ids,
+        soft_skill_ids: formValues.softskill_ids,
       };
+      console.log(updatedJob)
       if (selectedJob != null) {
         await Put(`/api/job-offer/${selectedJob.id}`, updatedJob);
       } else {
-        await Post(`/api/job-offer/create`, updatedJob);
+        await Post(`/api/job-of fer/create`, updatedJob);
       }
       setOpenModal(false);
       setSelectedJob(null);
@@ -240,109 +283,155 @@ export default function Recruiter_offer() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 400,
+            width: 1500,
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 4,
           }}
         >
           <h2>Modifier l'Offre</h2>
-          <TextField
-            fullWidth
-            label="Référence de l'offre"
-            name="job_ref"
-            value={formValues.job_ref}
-            onChange={handleInputChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Titre"
-            name="title"
-            value={formValues.title}
-            onChange={handleInputChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Description"
-            name="description"
-            value={formValues.description}
-            onChange={handleInputChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Lieu"
-            name="job_location"
-            value={formValues.job_location}
-            onChange={handleInputChange}
-            margin="normal"
-          />
-          <div style={{ display: "flex" }}>
-            <p>Niveau de diplôme :</p>
-            <Select
-              label="Diplome"
-              name="graduate"
-              value={formValues.graduate}
-              onChange={handleInputChange}
-            >
-              <MenuItem value="Premier cycle universitaire">
-                Premier cycle universitaire
-              </MenuItem>
-              <MenuItem value="DUT">DUT</MenuItem>
-              <MenuItem value="BUT">BUT</MenuItem>
-              <MenuItem value="BTS">BTS</MenuItem>
-              <MenuItem value="Licence">Licence</MenuItem>
-              <MenuItem value="Master">Master</MenuItem>
-              <MenuItem value="Doctorat">Doctorat</MenuItem>
-              <MenuItem value="Post-doctorat">Post-doctorat</MenuItem>
-              <MenuItem value="Diplôme spécialisé">Diplôme spécialisé</MenuItem>
-              <MenuItem value="Certificat">Certificat</MenuItem>
-            </Select>
+          <div style={{display: "flex", width: "100%"}}>
+            <div style={{width: "50%", padding: "10px"}}>
+              <TextField
+                fullWidth
+                label="Référence de l'offre"
+                name="job_ref"
+                value={formValues.job_ref}
+                onChange={handleInputChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Titre"
+                name="title"
+                value={formValues.title}
+                onChange={handleInputChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Description"
+                name="description"
+                value={formValues.description}
+                onChange={handleInputChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Lieu"
+                name="job_location"
+                value={formValues.job_location}
+                onChange={handleInputChange}
+                margin="normal"
+              />
+              <div>
+                <p>Niveau de diplôme :</p>
+                <Select
+                  label="Diplome"
+                  name="graduate"
+                  value={formValues.graduate}
+                  onChange={handleInputChange}
+                >
+                  <MenuItem value="Premier cycle universitaire">
+                    Premier cycle universitaire
+                  </MenuItem>
+                  <MenuItem value="DUT">DUT</MenuItem>
+                  <MenuItem value="BUT">BUT</MenuItem>
+                  <MenuItem value="BTS">BTS</MenuItem>
+                  <MenuItem value="Licence">Licence</MenuItem>
+                  <MenuItem value="Master">Master</MenuItem>
+                  <MenuItem value="Doctorat">Doctorat</MenuItem>
+                  <MenuItem value="Post-doctorat">Post-doctorat</MenuItem>
+                  <MenuItem value="Diplôme spécialisé">Diplôme spécialisé</MenuItem>
+                  <MenuItem value="Certificat">Certificat</MenuItem>
+                </Select>
+              </div>
+              <TextField
+                fullWidth
+                label="Expérience"
+                name="experience"
+                value={formValues.experience}
+                onChange={handleInputChange}
+                margin="normal"
+              />
+            </div>
+            <div style={{width: "50%", padding: "10px"}}>
+              <TextField
+                fullWidth
+                label="Salaire"
+                name="salary"
+                value={formValues.salary}
+                onChange={handleInputChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Entreprise"
+                name="company_description"
+                value={formValues.company_description}
+                onChange={handleInputChange}
+                margin="normal"
+              />
+              <div>
+                <p>Compétences:</p>
+                <Select
+                  multiple
+                  value={formValues.skill_ids || []}  // Keep the actual IDs as values
+                  onChange={(e) => setFormValues({ ...formValues, skill_ids: e.target.value })}
+                  renderValue={(selected) =>
+                    selected
+                      .map((skillId) => skills.find((skill) => skill.id === skillId)?.label)
+                      .join(", ")
+                  }
+                >
+                  {skills.map((skill) => (
+                    <MenuItem key={skill.id} value={skill.id}>
+                      <Checkbox checked={(formValues.skill_ids || []).includes(skill.id)} />
+                      <ListItemText primary={skill.label} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <p>Softskills:</p>
+                <Select
+                  multiple
+                  value={formValues.softskill_ids || []}  // Keep the actual IDs as values
+                  onChange={(e) => setFormValues({ ...formValues, softskill_ids: e.target.value })}
+                  renderValue={(selected) =>
+                    selected
+                      .map((softskillId) => softskills.find((softskill) => softskill.id === softskillId)?.label)
+                      .join(", ")
+                  }
+                >
+                  {softskills.map((softskill) => (
+                    <MenuItem key={softskill.id} value={softskill.id}>
+                      <Checkbox checked={(formValues.softskill_ids || []).includes(softskill.id)} />
+                      <ListItemText primary={softskill.label} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
+              <TextField
+                fullWidth
+                label="Date de publication"
+                name="posted_date"
+                type="date"
+                value={formValues.posted_date}
+                onChange={handleInputChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Date limite"
+                name="end_of_application"
+                type="date"
+                value={formValues.end_of_application}
+                onChange={handleInputChange}
+                margin="normal"
+              />
+            </div>
           </div>
-          <TextField
-            fullWidth
-            label="Expérience"
-            name="experience"
-            value={formValues.experience}
-            onChange={handleInputChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Salaire"
-            name="salary"
-            value={formValues.salary}
-            onChange={handleInputChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Entreprise"
-            name="company_description"
-            value={formValues.company_description}
-            onChange={handleInputChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Date de publication"
-            name="posted_date"
-            type="date"
-            value={formValues.posted_date}
-            onChange={handleInputChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Date limite"
-            name="end_of_application"
-            type="date"
-            value={formValues.end_of_application}
-            onChange={handleInputChange}
-            margin="normal"
-          />
           <Button
             variant="contained"
             color="primary"
