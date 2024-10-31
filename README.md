@@ -13,7 +13,6 @@ pip install -r requirements.txt
 
 cd front
 npm i
-
 ```
 
 Launch back :
