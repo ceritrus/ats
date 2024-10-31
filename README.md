@@ -29,7 +29,7 @@ npm run dev
 # Back representation :
 
 ```
-/my_fastapi_project
+/back
 │
 ├── app/
 │   ├── __init__.py
@@ -58,13 +58,9 @@ npm run dev
 │   │   ├── __init__.py
 │   │   ├── base.py          # Base ORM et création des tables
 │   │   └── session.py       # Connexion et session avec la base de données
-│   ├── utils/               # Utilitaires divers (fonctionnalités réutilisables)
-│   │   ├── __init__.py
-│   │   └── helpers.py       # Fonctions auxiliaires générales
-│   └── tests/               # Tests pour l'application (à voir si l'on a le temps)
+│   └── utils/               # Utilitaires divers (fonctionnalités réutilisables)
 │       ├── __init__.py
-│       ├── test_main.py     # Tests unitaires pour `main.py`
-│       └── test_user.py     # Tests unitaires pour les fonctionnalités utilisateur
+│       └── helpers.py       # Fonctions auxiliaires générales
 │
 ├── .env                     # Fichier de variables d'environnement
 └── requirements.txt         # Liste des dépendances Python
