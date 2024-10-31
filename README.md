@@ -2,14 +2,31 @@
 
 Un projet de suivi de candidature et d'analyse de CV
 
-# Backsetup :
+
+# Setup : 
+
+For start, git clone
+```
+git clone https://github.com/ceritrus/ats.git
+cd ats
+pip install -r requirements.txt
+
+cd front
+npm i
+
+```
 
 Launch back :
-
+In 'back' folder
 ```
 uvicorn back.main:app --port 8000 --reload
 ```
 
+Launch front :
+In 'front' folder
+```
+npm run dev
+```
 # Back representation :
 
 ```
@@ -51,6 +68,5 @@ uvicorn back.main:app --port 8000 --reload
 │       └── test_user.py     # Tests unitaires pour les fonctionnalités utilisateur
 │
 ├── .env                     # Fichier de variables d'environnement
-├── requirements.txt         # Liste des dépendances Python
-└── Dockerfile               # Dockerisation de l'application (à add plus tard si le temps est à notre aventage)
+└── requirements.txt         # Liste des dépendances Python
 ```
