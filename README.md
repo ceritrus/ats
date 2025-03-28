@@ -2,8 +2,9 @@
 
 Un projet de suivi de candidature et d'analyse de CV
 
-# Demo vids
-<iframe src="https://drive.google.com/file/d/1wrkILcsRegbrcAR2rjARAf9cVSCsWbcP/preview" width="640" height="360" frameborder="0" allow="autoplay"></iframe>
+[![Watch the video](https://img.youtube.com/vi/-P_pgxZMovs/maxresdefault.jpg)](https://youtu.be/-P_pgxZMovs)
+
+### [Demo vids](https://youtu.be/-P_pgxZMovs)
 
 # Setup : 
 
