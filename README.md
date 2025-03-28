@@ -2,6 +2,8 @@
 
 Un projet de suivi de candidature et d'analyse de CV
 
+# Demo vids
+[![image](https://github.com/user-attachments/assets/95866ce1-1fd8-4c40-a15e-62a3d8011628)](https://github.com/Bamc-dev/demo-video/releases/download/v1.0/demo.mp4)
 
 # Setup : 
 
