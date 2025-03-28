@@ -3,7 +3,7 @@
 Un projet de suivi de candidature et d'analyse de CV
 
 # Demo vids
-[![image](https://github.com/user-attachments/assets/95866ce1-1fd8-4c40-a15e-62a3d8011628)](https://github.com/Bamc-dev/demo-video/releases/download/ats/ats.mp4)
+<iframe src="https://drive.google.com/file/d/1wrkILcsRegbrcAR2rjARAf9cVSCsWbcP/preview" width="640" height="360" frameborder="0" allow="autoplay"></iframe>
 
 # Setup : 
 
